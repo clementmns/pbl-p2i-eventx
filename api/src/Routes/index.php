@@ -2,23 +2,12 @@
 
 header('Content-Type: application/json');
 
-$routes = [
-    '/status' => ['controller' => 'StatusController', 'action' => 'getStatus'],
-];
+require_once __DIR__ . '/Router.php';
 
-$request = strtok($_SERVER['REQUEST_URI'], '?');
+use App\Routes\Router;
 
-if (array_key_exists($request, $routes)) {
-    $controllerName = $routes[$request]['controller'];
-    $actionName = $routes[$request]['action'];
+$router = new Router();
 
-    require_once __DIR__ . '/../Controllers/' . $controllerName . '.php';
+$router->get('/status', 'StatusController', 'getStatus');
 
-    $controller = new $controllerName();
-    $response = $controller->$actionName();
-
-    echo json_encode($response);
-} else {
-    http_response_code(404);
-    echo json_encode(['error' => 'Route not found']);
-}
+$router->dispatch($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
