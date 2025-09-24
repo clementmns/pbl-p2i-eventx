@@ -16,6 +16,13 @@ services:
       - db
     build:
       context: ./docker/php
+      dockerfile: Dockerfile
+    environment:
+      PHP_EXTENSIONS: mysqli
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_HOST: db
     restart: always
 
   db:
@@ -23,10 +30,10 @@ services:
     container_name: eventx_db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: eventx
-      MYSQL_USER: app
-      MYSQL_PASSWORD: pass
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
     ports:
       - "3306:3306"
     volumes:
