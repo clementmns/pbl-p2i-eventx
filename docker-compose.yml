@@ -1,21 +1,19 @@
 version: '3.8'
 
 services:
-  php-apache:
+  api:
     image: php:8.2-apache
-    container_name: eventx_php
+    container_name: eventx_api
     volumes:
-      - ./public:/var/www/html
-      - ./src:/var/www/src
-      - ./config:/var/www/config
+      - ./api:/var/www/html
     ports:
-      - "8080:80"
+      - "8000:80"
     networks:
       - eventx-net
     depends_on:
       - db
     build:
-      context: ./docker/php
+      context: ./api
       dockerfile: Dockerfile
     environment:
       PHP_EXTENSIONS: mysqli
@@ -25,15 +23,29 @@ services:
       DB_HOST: db
     restart: always
 
+  front-end:
+    image: php:8.2-apache
+    container_name: eventx_front-end
+    volumes:
+      - ./front-end:/var/www/html
+    ports:
+      - "8080:80"
+    networks:
+      - eventx-net
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile
+    restart: always
+
   db:
     image: mysql:8.0
     container_name: eventx_db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASS}
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASS}
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
     ports:
       - "3306:3306"
     volumes:
