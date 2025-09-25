@@ -20,6 +20,24 @@ class SessionManager
         return $_SESSION[$key] ?? null;
     }
 
+    public function setFlash($type, $message)
+    {
+        $_SESSION['flash'] = [
+            'type' => $type,
+            'message' => $message
+        ];
+    }
+
+    public function getFlash()
+    {
+        if (isset($_SESSION['flash'])) {
+            $flash = $_SESSION['flash'];
+            unset($_SESSION['flash']);
+            return $flash;
+        }
+        return null;
+    }
+
     public function destroy()
     {
         if (session_status() === PHP_SESSION_ACTIVE) {

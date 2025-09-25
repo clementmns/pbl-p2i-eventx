@@ -9,30 +9,32 @@ use Twig\Loader\FilesystemLoader;
 class SettingsController
 {
     private $twig;
+    private $sessionManager;
 
     public function __construct()
     {
         $loader = new FilesystemLoader(__DIR__ . '/../Templates');
         $this->twig = new Environment($loader);
+        $this->sessionManager = new SessionManager();
+        $this->sessionManager->start();
     }
 
     public function settingsView()
     {
+        $flash = $this->sessionManager->getFlash();
         echo $this->twig->render('app/settings.twig', [
-            'profile' => $_SESSION['user']['profile'] ?? []
+            'user' => $_SESSION['user'] ?? [],
+            'flash' => $flash
         ]);
     }
 
     public function settings()
     {
         $profileData = $_POST;
-        $sessionManager = new SessionManager();
-        $user = $sessionManager->get('user');
+        $user = $this->sessionManager->get('user');
         if (!$user || !isset($user['id'])) {
-            echo $this->twig->render('app/settings.twig', [
-                'errors' => ['User not authenticated'],
-                'profile' => null
-            ]);
+            $this->sessionManager->setFlash('error', 'User not authenticated');
+            header('Location: /settings');
             return;
         }
         $userId = $user['id'];
@@ -42,18 +44,16 @@ class SettingsController
         if (isset($response)) {
             $updatedUser = $apiService->fetch("/users/{$userId}", 'GET');
             if ($updatedUser) {
-                $sessionManager->set('user', $updatedUser);
+                $this->sessionManager->set('user', $updatedUser);
             }
-            echo $this->twig->render('app/settings.twig', [
-                'success' => 'Profile updated successfully',
-                'profile' => $profileData
-            ]);
+            $this->sessionManager->setFlash('success', 'Profile updated successfully');
+            header('Location: /settings');
             return;
         } else {
             $errorMsg = 'Profile update failed. Please check your input and try again.';
             echo $this->twig->render('app/settings.twig', [
+                'user' => $_SESSION['user'] ?? [],
                 'errors' => [$errorMsg],
-                'profile' => null
             ]);
             return;
         }

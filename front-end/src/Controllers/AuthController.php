@@ -21,7 +21,8 @@ class AuthController
 
     public function loginView()
     {
-        echo $this->twig->render('auth/login.twig');
+        $flash = $this->sessionManager->getFlash();
+        echo $this->twig->render('auth/login.twig', ['flash' => $flash]);
     }
 
     public function login($mail, $password)
@@ -30,18 +31,18 @@ class AuthController
         if (!empty($mail) && !empty($password)) {
             $response = $apiService->fetch('/auth/login', 'POST', ['mail' => $mail, 'password' => $password]);
             if (!$response) {
-                $errorMsg = 'Unable to connect to authentication service. Please try again later.';
-                echo $this->twig->render('auth/login.twig', ['error' => $errorMsg]);
+                $this->sessionManager->setFlash('error', 'Unable to connect to authentication service. Please try again later.');
+                header('Location: /login');
                 return;
             }
             if (isset($response['error'])) {
-                $errorMsg = $response['error'] ?? 'An unknown error occurred.';
-                echo $this->twig->render('auth/login.twig', ['error' => $errorMsg]);
+                $this->sessionManager->setFlash('error', $response['error'] ?? 'An unknown error occurred.');
+                header('Location: /login');
                 return;
             }
             if (!isset($response['user'])) {
-                $errorMsg = 'Incorrect email or password. Please check your credentials.';
-                echo $this->twig->render('auth/login.twig', ['error' => $errorMsg]);
+                $this->sessionManager->setFlash('error', 'Incorrect email or password. Please check your credentials.');
+                header('Location: /login');
                 return;
             }
 

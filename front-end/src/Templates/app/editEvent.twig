@@ -4,12 +4,6 @@
 
 {% block content %}
 <div>
-    {% if success %}
-        {% include 'components/toast.twig' with { type: 'success', message: success } %}
-    {% endif %}
-    {% if errors %}
-        {% include 'components/toast.twig' with { type: 'error', message: errors } %}
-    {% endif %}
     <h1 class="text-3xl font-bold mb-6">Edit Event</h1>
     {% if event %}
     <form method="post" action="/events/edit" class="space-y-4 w-1/2">

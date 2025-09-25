@@ -2,6 +2,7 @@
 namespace Controllers;
 
 use Services\ApiService;
+use Services\SessionManager;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -9,27 +10,41 @@ class HomeController
 {
     private $twig;
     private $apiService;
+    private $sessionManager;
 
     public function __construct()
     {
         $loader = new FilesystemLoader(__DIR__ . '/../Templates');
         $this->twig = new Environment($loader);
         $this->apiService = new ApiService();
+        $this->sessionManager = new SessionManager();
+        $this->sessionManager->start();
     }
 
     public function index()
     {
-        $eventsResponse = $this->apiService->fetch('/events', 'GET');
-        $events = $eventsResponse ?? [];
+        $flash = $this->sessionManager->getFlash();
+        $user = $this->sessionManager->get('user');
 
-        $wishlistsResponse = $this->apiService->fetch('/events/wishlist?userId=' . $_SESSION['user']['id'], 'GET');
+        if (!$user || !isset($user['id'])) {
+            $this->sessionManager->setFlash('error', 'Please login to access this page');
+            header('Location: /login');
+            return;
+        }
+
+        $eventsResponse = $this->apiService->fetch('/events', 'GET');
+        if (!$eventsResponse) {
+            $this->sessionManager->setFlash('error', 'Unable to fetch events. Please try again later.');
+            $events = [];
+        } else {
+            $events = $eventsResponse;
+        }
+
+        $wishlistsResponse = $this->apiService->fetch('/events/wishlist?userId=' . $user['id'], 'GET');
         $wishlist = $wishlistsResponse ?? [];
 
-        $joinedEventsResponse = $this->apiService->fetch('/events/user/' . $_SESSION['user']['id'], 'GET');
+        $joinedEventsResponse = $this->apiService->fetch('/events/user/' . $user['id'], 'GET');
         $joinedEvents = $joinedEventsResponse ?? [];
-
-        $success = $_GET['success'] ?? null;
-        $errors = $_GET['errors'] ?? null;
 
         $events = array_filter($events, function ($event) use ($wishlist, $joinedEvents) {
             foreach ($wishlist as $wEvent) {
@@ -50,8 +65,7 @@ class HomeController
             'events' => $events,
             'wishlist' => $wishlist,
             'joinedEvents' => $joinedEvents,
-            'success' => $success,
-            'errors' => $errors
+            'flash' => $flash
         ]);
     }
 }
