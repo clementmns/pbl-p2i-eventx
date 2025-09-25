@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Routes;
+use App\Controllers\AuthController;
 use App\Controllers\StatusController;
 use App\Controllers\UserController;
+use App\Utils\Response;
 use JsonException;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
@@ -42,4 +44,19 @@ if (preg_match('#^/users/(\d+)$#', $uri, $m)) {
     if ($method === 'GET') { (new UserController())->getUser($id); exit; }
     if ($method === 'PUT') { (new UserController())->updateUser($id, getJsonBody()); exit; }
     if ($method === 'DELETE') { (new UserController())->deleteUser($id); exit; }
+}
+
+if ($uri === '/auth/register' && $method === 'POST') {
+    try {
+        (new AuthController())->register($_POST ?? getJsonBody());
+    } catch (JsonException $e) {
+    }
+    exit;
+}
+if ($uri === '/auth/login' && $method === 'POST') {
+    try {
+        (new AuthController())->login($_POST ?? getJsonBody());
+    } catch (JsonException $e) {
+    }
+    exit;
 }
