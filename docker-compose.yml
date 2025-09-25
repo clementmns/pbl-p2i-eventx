@@ -16,7 +16,6 @@ services:
       context: ./api
       dockerfile: Dockerfile
     environment:
-      PHP_EXTENSIONS: mysqli
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASS}
@@ -50,7 +49,7 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
-      - ./sql:/docker-entrypoint-initdb.d:ro
+      - ./api/sql:/docker-entrypoint-initdb.d:ro
     networks:
       - eventx-net
 

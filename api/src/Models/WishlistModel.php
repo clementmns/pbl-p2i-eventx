@@ -1,5 +1,8 @@
 <?php
 
+namespace App\Models;
+use DateTime;
+
 class WishlistModel {
     private int $userId;
     private int $eventId;

@@ -1,6 +1,15 @@
 <?php
-$db = new mysqli($_ENV["DB_HOST"], $_ENV["DB_USER"], $_ENV["DB_PASS"], $_ENV["DB_NAME"]);
+require_once __DIR__ . '/../vendor/autoload.php';
 
-if ($db->connect_error) {
-  die("Connection failed: " . $db->connect_error);
+$db = null;
+try {
+  $db = new PDO(
+    "mysql:host=" . getenv("DB_HOST") . ";dbname=" . getenv("DB_NAME") . ";charset=utf8mb4",
+    getenv("DB_USER"),
+    getenv("DB_PASS")
+  );
+  $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+  die("Connection failed: " . $e->getMessage());
 }
+return $db;

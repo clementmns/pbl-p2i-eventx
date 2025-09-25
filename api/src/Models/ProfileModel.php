@@ -1,5 +1,8 @@
 <?php
 
+namespace App\Models;
+use DateTime;
+
 class ProfileModel {
     private int $id;
     private string $firstName;
@@ -9,5 +12,5 @@ class ProfileModel {
     private DateTime $createdAt;
     private ?DateTime $updatedAt;
     private int $userId;
-    
+
 }

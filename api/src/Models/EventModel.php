@@ -1,5 +1,8 @@
 <?php
 
+namespace App\Models;
+use DateTime;
+
 class EventModel {
     private int $id;
     private string $name;
