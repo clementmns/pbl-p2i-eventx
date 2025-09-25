@@ -10,22 +10,23 @@ class HomeController
 {
     private $twig;
     private $apiService;
+    private $sessionManager;
 
     public function __construct()
     {
         $loader = new FilesystemLoader(__DIR__ . '/../Templates');
         $this->twig = new Environment($loader);
         $this->apiService = new ApiService();
+        $this->sessionManager = new SessionManager();
+        $this->sessionManager->start();
     }
 
     public function index()
     {
-        // $session = new SessionManager();
-        // $session->start();
-        // if (!$session->get('user_id')) {
-        //     header('Location: /login');
-        //     exit;
-        // }
+        if (!$this->sessionManager->get('user')) {
+            header('Location: /login');
+            exit;
+        }
         echo $this->twig->render('app/home.twig');
     }
 }

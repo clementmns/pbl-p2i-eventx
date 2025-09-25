@@ -9,22 +9,34 @@ use Twig\Loader\FilesystemLoader;
 class SettingsController
 {
     private $twig;
+    private $sessionManager;
 
     public function __construct()
     {
         $loader = new FilesystemLoader(__DIR__ . '/../Templates');
         $this->twig = new Environment($loader);
+        $this->sessionManager = new SessionManager();
+        $this->sessionManager->start();
     }
 
     public function settingsView()
     {
+        if (!$this->sessionManager->get('user')) {
+            header('Location: /login');
+            exit;
+        }
+
         echo $this->twig->render('app/settings.twig', [
-            'profile' => $_SESSION['profile'] ?? []
+            'profile' => $this->sessionManager->get('profile') ?? []
         ]);
     }
 
     public function settings()
     {
+        if (!$this->sessionManager->get('user')) {
+            header('Location: /login');
+            exit;
+        }
         $profileData = $_POST;
         $apiService = new ApiService();
         $response = $apiService->fetch('/settings', 'POST', $profileData);
