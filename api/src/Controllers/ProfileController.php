@@ -2,43 +2,57 @@
 namespace App\Controllers;
 
 use App\Services\ProfileService;
+use App\Services\UserService;
+use App\Utils\Response;
 use JsonException;
 
-class ProfileController {
+class ProfileController
+{
     private ProfileService $service;
+    private UserService $userService;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->service = new ProfileService();
+        $this->userService = new UserService();
     }
 
     /**
-     * @throws JsonException
+     * Get a profile by user ID.
+     * @param int $userId User ID
+     * @return void
      */
-    public function getProfile(int $id) {
-        echo json_encode($this->service->getProfile($id), JSON_THROW_ON_ERROR);
+    public function getProfileByUser(int $userId)
+    {
+        if (!$userId) {
+            Response::json(['error' => 'userId_required'], 400);
+            return;
+        }
+        // check if user exists
+        if (!$this->userService->getUser($userId)) {
+            Response::json(['error' => 'user_not_found'], 404);
+            return;
+        }
+        Response::json($this->service->getProfileByUser($userId));
     }
 
     /**
-     * @throws JsonException
+     * Create or update a profile for a user.
+     * @param int $userId User ID
+     * @param array $data Profile data
+     * @return void
      */
-    public function getProfileByUser(int $userId) {
-        echo json_encode($this->service->getProfileByUser($userId), JSON_THROW_ON_ERROR);
-    }
-
-    /**
-     * @throws JsonException
-     */
-    /**
-     * @throws JsonException
-     */
-    public function upsertProfile(int $userId, array $data) {
-        echo json_encode($this->service->upsertProfile($userId, $data), JSON_THROW_ON_ERROR);
-    }
-
-    /**
-     * @throws JsonException
-     */
-    public function deleteProfile(int $id) {
-        echo json_encode($this->service->deleteProfile($id), JSON_THROW_ON_ERROR);
+    public function upsertProfile(int $userId, array $data)
+    {
+        if (!$userId) {
+            Response::json(['error' => 'userId_required'], 400);
+            return;
+        }
+        // check if user exists
+        if (!$this->userService->getUser($userId)) {
+            Response::json(['error' => 'user_not_found'], 404);
+            return;
+        }
+        Response::json($this->service->upsertProfile($userId, $data));
     }
 }

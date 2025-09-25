@@ -8,7 +8,6 @@ class Database
     public static function getConnection()
     {
         if (self::$connection === null) {
-            // Charger la configuration
             $config = require __DIR__ . '/../../config/config.php';
 
             try {

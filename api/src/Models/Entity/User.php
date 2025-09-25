@@ -1,7 +1,8 @@
 <?php
 namespace App\Models\Entity;
 
-class User {
+class User
+{
     public ?int $id;
     public string $mail;
     public string $passwordHash;
@@ -9,7 +10,8 @@ class User {
     public ?int $roleId;
     public $profile = null;
 
-    public function __construct(?int $id, string $mail, string $passwordHash, bool $isActive = true, ?int $roleId = null) {
+    public function __construct(?int $id, string $mail, string $passwordHash, bool $isActive = true, ?int $roleId = null)
+    {
         $this->id = $id;
         $this->mail = $mail;
         $this->passwordHash = $passwordHash;
@@ -17,7 +19,8 @@ class User {
         $this->roleId = $roleId;
     }
 
-    public function toArray(): array {
+    public function toArray(): array
+    {
         $arr = [
             'id' => $this->id,
             'mail' => $this->mail,

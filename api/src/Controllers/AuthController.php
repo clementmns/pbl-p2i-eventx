@@ -4,22 +4,33 @@ namespace App\Controllers;
 use App\Services\UserService;
 use App\Utils\Response;
 
-class AuthController {
+class AuthController
+{
     private UserService $service;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->service = new UserService();
     }
 
+
     /**
-     * @throws \JsonException
+     * Register a new user.
+     * @param array $data Must contain 'mail' and 'password'.
+     * @return void
      */
-    public function register(array $data): void {
+    public function register(array $data): void
+    {
         $mail = $data['mail'] ?? null;
         $password = $data['password'] ?? null;
 
         if (!$mail || !$password) {
             Response::json(['error' => 'mail_and_password_required'], 400);
+            return;
+        }
+
+        if (strlen($password) < 8 || !preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password) || !preg_match('/[0-9]/', $password)) {
+            Response::json(['error' => 'weak_password'], 400);
             return;
         }
 
@@ -32,14 +43,18 @@ class AuthController {
 
         Response::json([
             'message' => 'User registered successfully',
-            'user'  => $result['user']
+            'user' => $result['user']
         ], 201);
     }
 
     /**
+     * Login a user.
+     * @param array $data Must contain 'mail' and 'password'.
+     * @return void
      * @throws \JsonException
      */
-    public function login(array $data): void {
+    public function login(array $data): void
+    {
         $mail = $data['mail'] ?? null;
         $password = $data['password'] ?? null;
 
@@ -57,7 +72,7 @@ class AuthController {
 
         Response::json([
             'message' => 'Login successful',
-            'user'  => $result['user']
+            'user' => $result['user']
         ], 200);
     }
 }

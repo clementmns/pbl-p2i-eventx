@@ -12,8 +12,6 @@ use JsonException;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-$db = require __DIR__ . '/../../config/database.php';
-
 header('Content-Type: application/json');
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -23,14 +21,15 @@ $uri = preg_replace('#^/api#', '', $uri);
 /**
  * @throws JsonException
  */
-function getJsonBody(): array {
+function getJsonBody(): array
+{
     $raw = file_get_contents('php://input');
     $data = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
     return is_array($data) ? $data : [];
 }
 
 // ---------- Status ----------
-if($uri === '/status' && $method === 'GET') {
+if ($uri === '/status' && $method === 'GET') {
     $controller = new StatusController();
     echo json_encode($controller->getStatus(), JSON_THROW_ON_ERROR);
     exit;
@@ -42,19 +41,34 @@ if ($uri === '/users' && $method === 'GET') {
     exit;
 }
 if (preg_match('#^/users/(\d+)$#', $uri, $m)) {
-    $id = (int)$m[1];
-    if ($method === 'GET') { (new UserController())->getUser($id); exit; }
-    if ($method === 'PUT') { (new UserController())->updateUser($id, getJsonBody()); exit; }
-    if ($method === 'DELETE') { (new UserController())->deleteUser($id); exit; }
+    $id = (int) $m[1];
+    if ($method === 'GET') {
+        (new UserController())->getUser($id);
+        exit;
+    }
+    if ($method === 'PUT') {
+        (new UserController())->updateUser($id, getJsonBody());
+        exit;
+    }
+    if ($method === 'DELETE') {
+        (new UserController())->deleteUser($id);
+        exit;
+    }
 }
 
 // ---------- Auth ----------
 if ($uri === '/auth/register' && $method === 'POST') {
-    try { (new AuthController())->register(getJsonBody()); } catch (JsonException $e) {}
+    try {
+        (new AuthController())->register(getJsonBody());
+    } catch (JsonException $e) {
+    }
     exit;
 }
 if ($uri === '/auth/login' && $method === 'POST') {
-    try { (new AuthController())->login(getJsonBody()); } catch (JsonException $e) {}
+    try {
+        (new AuthController())->login(getJsonBody());
+    } catch (JsonException $e) {
+    }
     exit;
 }
 
@@ -64,30 +78,41 @@ $eventController = new EventController();
 if ($uri === '/events' && $method === 'GET') {
     try {
         $eventController->listEvents();
-    } catch (JsonException $e) {}
+    } catch (JsonException $e) {
+    }
     exit;
 }
 if ($uri === '/events' && $method === 'POST') {
     try {
         $eventController->createEvent(getJsonBody());
-    } catch (JsonException $e) {}
+    } catch (JsonException $e) {
+    }
     exit;
 }
 if (preg_match('#^/events/(\d+)$#', $uri, $m)) {
-    $id = (int)$m[1];
-    if ($method === 'GET') { $eventController->getEvent($id); exit; }
+    $id = (int) $m[1];
+    if ($method === 'GET') {
+        $eventController->getEvent($id);
+        exit;
+    }
     if ($method === 'PUT') {
         try {
             $eventController->updateEvent($id, getJsonBody());
-        } catch (JsonException $e) {}
-        exit; }
-    if ($method === 'DELETE') { $eventController->deleteEvent($id); exit; }
+        } catch (JsonException $e) {
+        }
+        exit;
+    }
+    if ($method === 'DELETE') {
+        $eventController->deleteEvent($id);
+        exit;
+    }
 }
 
 if (preg_match('#^/events/user/(\d+)$#', $uri, $m) && $method === 'GET') {
     try {
-        $eventController->getEventsJoinedByUser((int)$m[1]);
-    } catch (JsonException $e) {}
+        $eventController->getEventsJoinedByUser((int) $m[1]);
+    } catch (JsonException $e) {
+    }
     exit;
 }
 
@@ -95,19 +120,23 @@ if (preg_match('#^/events/user/(\d+)$#', $uri, $m) && $method === 'GET') {
 if (preg_match('#^/events/(\d+)/join$#', $uri, $m) && $method === 'POST') {
     try {
         $data = getJsonBody();
-    } catch (JsonException $e) {}
+    } catch (JsonException $e) {
+    }
     try {
-        $eventController->joinEvent((int)$m[1], $data['userId'] ?? null);
-    } catch (JsonException $e) {}
+        $eventController->joinEvent((int) $m[1], $data['userId'] ?? null);
+    } catch (JsonException $e) {
+    }
     exit;
 }
 if (preg_match('#^/events/(\d+)/quit$#', $uri, $m) && $method === 'POST') {
     try {
         $data = getJsonBody();
-    } catch (JsonException $e) {}
+    } catch (JsonException $e) {
+    }
     try {
-        $eventController->quitEvent((int)$m[1], $data['userId'] ?? null);
-    } catch (JsonException $e) {}
+        $eventController->quitEvent((int) $m[1], $data['userId'] ?? null);
+    } catch (JsonException $e) {
+    }
     exit;
 }
 
@@ -115,19 +144,23 @@ if (preg_match('#^/events/(\d+)/quit$#', $uri, $m) && $method === 'POST') {
 if (preg_match('#^/events/(\d+)/wishlist/add$#', $uri, $m) && $method === 'POST') {
     try {
         $data = getJsonBody();
-    } catch (JsonException $e) {}
+    } catch (JsonException $e) {
+    }
     try {
-        $eventController->addWishlist((int)$m[1], $data['userId'] ?? null);
-    } catch (JsonException $e) {}
+        $eventController->addWishlist((int) $m[1], $data['userId'] ?? null);
+    } catch (JsonException $e) {
+    }
     exit;
 }
 if (preg_match('#^/events/(\d+)/wishlist/remove$#', $uri, $m) && $method === 'POST') {
     try {
         $data = getJsonBody();
-    } catch (JsonException $e) {}
+    } catch (JsonException $e) {
+    }
     try {
-        $eventController->removeWishlist((int)$m[1], $data['userId'] ?? null);
-    } catch (JsonException $e) {}
+        $eventController->removeWishlist((int) $m[1], $data['userId'] ?? null);
+    } catch (JsonException $e) {
+    }
     exit;
 }
 
@@ -136,28 +169,32 @@ if ($uri === '/events/wishlist' && $method === 'GET') {
     $userId = $_GET['userId'] ?? null;
     try {
         $eventController->listWishlist($userId);
-    } catch (JsonException $e) {}
+    } catch (JsonException $e) {
+    }
     exit;
 }
 
 // ---------- Fallback ----------
 try {
     Response::json(['error' => 'Route not found'], 404);
-} catch (JsonException $e) {}
+} catch (JsonException $e) {
+}
 
 // ----------- Profile ----------
 if (preg_match('#^/profiles/user/(\d+)$#', $uri, $m)) {
-    $userId = (int)$m[1];
+    $userId = (int) $m[1];
     if ($method === 'GET') {
         try {
             (new ProfileController())->getProfileByUser($userId);
-        } catch (JsonException $e) {}
+        } catch (JsonException $e) {
+        }
         exit;
     }
     if ($method === 'PUT') {
         try {
             (new ProfileController())->upsertProfile($userId, getJsonBody());
-        } catch (JsonException $e) {}
+        } catch (JsonException $e) {
+        }
         exit;
     }
 }

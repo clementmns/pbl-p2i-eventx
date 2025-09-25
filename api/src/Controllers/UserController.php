@@ -4,14 +4,23 @@ namespace App\Controllers;
 use App\Services\UserService;
 use App\Utils\Response;
 
-class UserController {
+class UserController
+{
     private UserService $svc;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->svc = new UserService();
     }
 
-    public function register(array $data): void {
+    /**
+     * Registers a new user.
+     *
+     * @param array $data User data containing 'mail' and 'password'.
+     * @return void
+     */
+    public function register(array $data): void
+    {
         $mail = $data['mail'] ?? null;
         $pass = $data['password'] ?? null;
         if (!$mail || !$pass) {
@@ -26,7 +35,14 @@ class UserController {
         Response::json(['user' => $res['user']], 201);
     }
 
-    public function login(array $data): void {
+    /**
+     * Logs in a user.
+     *
+     * @param array $data User credentials containing 'mail' and 'password'.
+     * @return void
+     */
+    public function login(array $data): void
+    {
         $mail = $data['mail'] ?? null;
         $pass = $data['password'] ?? null;
         if (!$mail || !$pass) {
@@ -41,11 +57,24 @@ class UserController {
         Response::json(['user' => $res['user']], 200);
     }
 
-    public function listUsers(): void {
+    /**
+     * Lists all users.
+     *
+     * @return void
+     */
+    public function listUsers(): void
+    {
         Response::json($this->svc->getAllUsers());
     }
 
-    public function getUser(int $id): void {
+    /**
+     * Gets a user by ID.
+     *
+     * @param int $id User ID.
+     * @return void
+     */
+    public function getUser(int $id): void
+    {
         $user = $this->svc->getUser($id);
         if (!$user) {
             Response::json(['error' => 'not_found'], 404);
@@ -54,11 +83,26 @@ class UserController {
         Response::json($user);
     }
 
-    public function updateUser(int $id, array $data): void {
+    /**
+     * Updates a user by ID.
+     *
+     * @param int $id User ID.
+     * @param array $data Data to update.
+     * @return void
+     */
+    public function updateUser(int $id, array $data): void
+    {
         Response::json(['ok' => $this->svc->updateUser($id, $data)]);
     }
 
-    public function deleteUser(int $id): void {
+    /**
+     * Deletes a user by ID.
+     *
+     * @param int $id User ID.
+     * @return void
+     */
+    public function deleteUser(int $id): void
+    {
         Response::json(['ok' => $this->svc->deleteUser($id)]);
     }
 }

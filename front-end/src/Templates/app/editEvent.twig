@@ -24,7 +24,7 @@
                 id="eventStartDate"
                 class="mt-1 block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-gray-500 focus:border-gray-500"
                 required
-                value="{{ event.startDate|date('Y-m-d\TH:i') }}"
+                value="{{ event.startDate|date('Y-m-d\\TH:i') }}"
                 min="{{ "now"|date('Y-m-d\\TH:i') }}"
             >
         </div>
@@ -36,7 +36,7 @@
                 id="eventEndDate"
                 class="mt-1 block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-gray-500 focus:border-gray-500"
                 required
-                value="{{ event.endDate|date('Y-m-d\TH:i') }}"
+                value="{{ event.endDate|date('Y-m-d\\TH:i') }}"
                 min="{{ "now"|date('Y-m-d\\TH:i') }}"
             >
         </div>

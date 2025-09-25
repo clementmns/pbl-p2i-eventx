@@ -1,7 +1,4 @@
 <?php
-// config/config.php
-
-// Configuration de la base de données
 return [
     'DB_HOST' => getenv("DB_HOST"),
     'DB_NAME' => getenv("DB_NAME"),

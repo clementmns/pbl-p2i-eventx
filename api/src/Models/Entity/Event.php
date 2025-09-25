@@ -1,7 +1,8 @@
 <?php
 namespace App\Models\Entity;
 
-class Event {
+class Event
+{
     public ?int $id;
     public string $name;
     public ?string $description;
@@ -12,7 +13,8 @@ class Event {
     public int $registeredCount = 0;
     public int $wishlistCount = 0;
 
-    public function __construct(?int $id, string $name, ?string $description, string $startDate, string $endDate, string $place, int $userId, int $registeredCount = 0, int $wishlistCount = 0) {
+    public function __construct(?int $id, string $name, ?string $description, string $startDate, string $endDate, string $place, int $userId, int $registeredCount = 0, int $wishlistCount = 0)
+    {
         $this->id = $id;
         $this->name = $name;
         $this->description = $description;
@@ -24,7 +26,8 @@ class Event {
         $this->wishlistCount = $wishlistCount;
     }
 
-    public function toArray(): array {
+    public function toArray(): array
+    {
         return [
             'id' => $this->id,
             'name' => $this->name,
