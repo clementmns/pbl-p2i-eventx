@@ -49,4 +49,20 @@ $router->post('/settings', function (): void {
     $controller->settings();
 });
 
+// ---------------
+// EVENT ROUTES
+$router->get('/events', function (): void {
+    $controller = new Controllers\EventController();
+    $controller->eventView();
+});
+$router->get('/events/create', function (): void {
+    $controller = new Controllers\EventController();
+    $controller->createEventView();
+});
+
+$router->post('/events', function (): void {
+    $controller = new Controllers\EventController();
+    $controller->createEvent();
+});
+
 $router->dispatch();
