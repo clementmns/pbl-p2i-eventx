@@ -13,6 +13,7 @@ services:
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASS}
       DB_HOST: db
+      JWT_SECRET: ${JWT_SECRET}
     volumes:
       - ./api:/var/www/html
     ports:

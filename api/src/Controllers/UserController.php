@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use App\Services\UserService;
+use App\Utils\Auth;
 use App\Utils\Response;
 
 class UserController
@@ -64,6 +65,11 @@ class UserController
      */
     public function listUsers(): void
     {
+        $payload = Auth::getBearerTokenPayload();
+        if (!$payload) {
+            Response::json(['error' => 'Unauthorized'], 401);
+            return;
+        }
         Response::json($this->svc->getAllUsers());
     }
 
@@ -75,6 +81,11 @@ class UserController
      */
     public function getUser(int $id): void
     {
+        $payload = Auth::getBearerTokenPayload();
+        if (!$payload) {
+            Response::json(['error' => 'Unauthorized'], 401);
+            return;
+        }
         $user = $this->svc->getUser($id);
         if (!$user) {
             Response::json(['error' => 'not_found'], 404);
@@ -92,7 +103,29 @@ class UserController
      */
     public function updateUser(int $id, array $data): void
     {
+        $payload = Auth::getBearerTokenPayload();
+        if (!$payload) {
+            Response::json(['error' => 'Unauthorized'], 401);
+            return;
+        }
         Response::json(['ok' => $this->svc->updateUser($id, $data)]);
+    }
+
+    /**
+     * Lists all users - Admin only endpoint.
+     *
+     * @return void
+     */
+    public function listAllUsers(): void
+    {
+        // Check if user is admin
+        if (!Auth::isAdmin()) {
+            Response::json(['error' => 'Forbidden: Admin access required'], 403);
+            return;
+        }
+
+        $users = $this->svc->getAllUsers();
+        Response::json(['users' => $users]);
     }
 
     /**
@@ -103,6 +136,17 @@ class UserController
      */
     public function deleteUser(int $id): void
     {
+        // Check if user is authenticated and is admin
+        if (!Auth::isAdmin()) {
+            Response::json(['error' => 'Forbidden: Admin access required'], 403);
+            return;
+        }
+
+        $payload = Auth::getBearerTokenPayload();
+        if (!$payload) {
+            Response::json(['error' => 'Unauthorized'], 401);
+            return;
+        }
         Response::json(['ok' => $this->svc->deleteUser($id)]);
     }
 }

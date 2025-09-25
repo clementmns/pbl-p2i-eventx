@@ -41,9 +41,16 @@ class AuthController
             return;
         }
 
+        $user = $result['user'];
+        $token = \App\Utils\Auth::generateJWT([
+            'id' => $user->id,
+            'mail' => $user->mail,
+            'roleId' => $user->roleId
+        ]);
         Response::json([
             'message' => 'User registered successfully',
-            'user' => $result['user']
+            'user' => $result['user'],
+            'token' => $token
         ], 201);
     }
 
@@ -70,9 +77,16 @@ class AuthController
             return;
         }
 
+        $user = $result['user'];
+        $token = \App\Utils\Auth::generateJWT([
+            'id' => $user->id,
+            'mail' => $user->mail,
+            'roleId' => $user->roleId
+        ]);
         Response::json([
             'message' => 'Login successful',
-            'user' => $result['user']
+            'user' => $result['user'],
+            'token' => $token
         ], 200);
     }
 }

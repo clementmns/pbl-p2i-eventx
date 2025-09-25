@@ -3,6 +3,7 @@ namespace App\Controllers;
 
 use App\Services\ProfileService;
 use App\Services\UserService;
+use App\Utils\Auth;
 use App\Utils\Response;
 use JsonException;
 
@@ -24,6 +25,11 @@ class ProfileController
      */
     public function getProfileByUser(int $userId)
     {
+        $payload = Auth::getBearerTokenPayload();
+        if (!$payload) {
+            Response::json(['error' => 'Unauthorized'], 401);
+            return;
+        }
         if (!$userId) {
             Response::json(['error' => 'userId_required'], 400);
             return;
@@ -44,6 +50,11 @@ class ProfileController
      */
     public function upsertProfile(int $userId, array $data)
     {
+        $payload = Auth::getBearerTokenPayload();
+        if (!$payload) {
+            Response::json(['error' => 'Unauthorized'], 401);
+            return;
+        }
         if (!$userId) {
             Response::json(['error' => 'userId_required'], 400);
             return;

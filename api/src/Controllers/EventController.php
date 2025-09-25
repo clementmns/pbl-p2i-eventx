@@ -4,6 +4,7 @@ namespace App\Controllers;
 use App\Services\EventService;
 use App\Services\UserService;
 use App\Utils\Response;
+use App\Utils\Auth;
 
 class EventController
 {
@@ -22,6 +23,11 @@ class EventController
      */
     public function listEvents(): void
     {
+        $payload = Auth::getBearerTokenPayload();
+        if (!$payload) {
+            Response::json(['error' => 'Unauthorized'], 401);
+            return;
+        }
         Response::json($this->svc->getAllEvents());
     }
 
@@ -32,6 +38,11 @@ class EventController
      */
     public function getEvent(int $id): void
     {
+        $payload = Auth::getBearerTokenPayload();
+        if (!$payload) {
+            Response::json(['error' => 'Unauthorized'], 401);
+            return;
+        }
         $ev = $this->svc->getEvent($id);
         if (!$ev) {
             Response::json(['error' => 'not_found'], 404);
@@ -47,17 +58,20 @@ class EventController
      */
     public function getEventsJoinedByUser($userId)
     {
+        $payload = Auth::getBearerTokenPayload();
+        if (!$payload) {
+            Response::json(['error' => 'Unauthorized'], 401);
+            return;
+        }
         if (!$userId) {
             Response::json(['error' => 'userId_required'], 400);
             return;
         }
-
         // check if user exists
         if (!$this->userService->getUser($userId)) {
             Response::json(['error' => 'user_not_found'], 404);
             return;
         }
-
         $events = $this->svc->getEventsJoinedByUser($userId);
         Response::json($events);
     }
@@ -69,6 +83,11 @@ class EventController
      */
     public function createEvent(array $data): void
     {
+        $payload = Auth::getBearerTokenPayload();
+        if (!$payload) {
+            Response::json(['error' => 'Unauthorized'], 401);
+            return;
+        }
         // Required params for event creation
         $required = ['userId', 'name', 'startDate', 'endDate', 'place'];
         $missing = array_filter($required, fn($k) => empty($data[$k]));
@@ -97,6 +116,11 @@ class EventController
      */
     public function updateEvent(int $id, array $data): void
     {
+        $payload = Auth::getBearerTokenPayload();
+        if (!$payload) {
+            Response::json(['error' => 'Unauthorized'], 401);
+            return;
+        }
         // Required params for event update
         $required = ['userId', 'name', 'startDate', 'endDate', 'place'];
         $missing = array_filter($required, fn($k) => empty($data[$k]));
@@ -120,6 +144,11 @@ class EventController
      */
     public function deleteEvent(int $id): void
     {
+        $payload = Auth::getBearerTokenPayload();
+        if (!$payload) {
+            Response::json(['error' => 'Unauthorized'], 401);
+            return;
+        }
         Response::json($this->svc->deleteEvent($id));
     }
 
@@ -131,6 +160,11 @@ class EventController
      */
     public function joinEvent(int $eventId, ?int $userId): void
     {
+        $payload = Auth::getBearerTokenPayload();
+        if (!$payload) {
+            Response::json(['error' => 'Unauthorized'], 401);
+            return;
+        }
         if (!$userId) {
             Response::json(['error' => 'userId_required'], 400);
             return;
@@ -157,6 +191,11 @@ class EventController
      */
     public function quitEvent(int $eventId, ?int $userId): void
     {
+        $payload = Auth::getBearerTokenPayload();
+        if (!$payload) {
+            Response::json(['error' => 'Unauthorized'], 401);
+            return;
+        }
         if (!$userId) {
             Response::json(['error' => 'userId_required'], 400);
             return;
@@ -182,6 +221,11 @@ class EventController
      */
     public function listWishlist(?int $userId): void
     {
+        $payload = Auth::getBearerTokenPayload();
+        if (!$payload) {
+            Response::json(['error' => 'Unauthorized'], 401);
+            return;
+        }
         if (!$userId) {
             Response::json(['error' => 'userId_required'], 400);
             return;
@@ -205,6 +249,11 @@ class EventController
      */
     public function addWishlist(int $eventId, ?int $userId): void
     {
+        $payload = Auth::getBearerTokenPayload();
+        if (!$payload) {
+            Response::json(['error' => 'Unauthorized'], 401);
+            return;
+        }
         if (!$userId) {
             Response::json(['error' => 'userId_required'], 400);
             return;
@@ -231,6 +280,11 @@ class EventController
      */
     public function removeWishlist(int $eventId, ?int $userId): void
     {
+        $payload = Auth::getBearerTokenPayload();
+        if (!$payload) {
+            Response::json(['error' => 'Unauthorized'], 401);
+            return;
+        }
         if (!$userId) {
             Response::json(['error' => 'userId_required'], 400);
             return;

@@ -37,7 +37,7 @@ class AuthController
 
         $response = $apiService->fetch('/auth/login', 'POST', ['mail' => $mail, 'password' => $password]);
 
-        if (!isset($response['user'])) {
+        if (!isset($response['user']) || !isset($response['token'])) {
             $this->sessionManager->setFlash('error', 'Incorrect email or password. Please check your credentials.');
             header('Location: /login');
             return;
@@ -46,6 +46,7 @@ class AuthController
         $session = new SessionManager();
         $session->start();
         $session->set('user', $response['user']);
+        $_SESSION['token'] = $response['token'];
         header('Location: /');
         exit;
     }
@@ -74,14 +75,25 @@ class AuthController
 
         $response = $apiService->fetch('/auth/register', 'POST', ['mail' => $mail, 'password' => $password]);
 
-        if (!isset($response['user'])) {
+        if (isset($response['error']) && $response['error'] === 'weak_password') {
+            $this->sessionManager->setFlash('error', 'Password must be at least 8 characters long and include uppercase, lowercase letters, and numbers.');
+            header('Location: /register');
+            return;
+        }
+
+        if (!isset($response['user']) || !isset($response['token'])) {
             $this->sessionManager->setFlash('error', 'Registration failed. Please check your details and try again.');
             header('Location: /register');
             return;
         }
 
-        $this->sessionManager->setFlash('success', 'Registration successful! Please login.');
-        header('Location: /login');
+        $session = new SessionManager();
+        $session->start();
+        $session->set('user', $response['user']);
+        $_SESSION['token'] = $response['token'];
+        $this->sessionManager->setFlash('success', 'Registration successful!');
+        header('Location: /');
+        exit;
     }
 
     public function logout()
