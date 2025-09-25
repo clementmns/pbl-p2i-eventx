@@ -1,14 +1,17 @@
 <?php
 namespace Services;
 
-class ApiService {
+class ApiService
+{
     private $apiUrl;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->apiUrl = getenv('API_URL');
     }
 
-    public function fetch($endpoint, $method = 'GET', $data = null) : array {
+    public function fetch($endpoint, $method = 'GET', $data = null): array
+    {
         $url = $this->apiUrl . $endpoint;
         $options = [
             'http' => [

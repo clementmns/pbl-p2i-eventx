@@ -1,18 +1,22 @@
 <?php
 namespace FrontEnd;
 
-class Router {
+class Router
+{
     private $routes = [];
 
-    public function get($path, $handler) {
+    public function get($path, $handler)
+    {
         $this->routes['GET'][$path] = $handler;
     }
 
-    public function post($path, $handler) {
+    public function post($path, $handler)
+    {
         $this->routes['POST'][$path] = $handler;
     }
 
-    public function dispatch() {
+    public function dispatch()
+    {
         $method = $_SERVER['REQUEST_METHOD'];
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $handler = $this->routes[$method][$uri] ?? null;

@@ -2,41 +2,39 @@ version: '3.8'
 
 services:
   api:
-    image: php:8.2-apache
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    image: eventx_api:latest
     container_name: eventx_api
+    restart: always
+    environment:
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_HOST: db
     volumes:
       - ./api:/var/www/html
     ports:
       - "8000:80"
     networks:
       - eventx-net
-    depends_on:
-      - db
-    build:
-      context: ./api
-      dockerfile: Dockerfile
-    environment:
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASS: ${DB_PASS}
-      DB_HOST: db
-    restart: always
 
   front-end:
-    image: php:8.2-apache
-    container_name: eventx_front-end
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile
+    image: eventx_frontend:latest
+    container_name: eventx_frontend
+    restart: always
     environment:
-      API_URL: http://api/api
+      API_URL: http://api:80/api
     volumes:
       - ./front-end:/var/www/html
     ports:
       - "8080:80"
     networks:
       - eventx-net
-    build:
-      context: ./front-end
-      dockerfile: Dockerfile
-    restart: always
 
   db:
     image: mysql:8.0
