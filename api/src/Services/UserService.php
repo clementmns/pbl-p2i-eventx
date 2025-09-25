@@ -18,7 +18,7 @@ class UserService {
             return ['ok' => false, 'error' => 'already_exists'];
         }
         $hash = password_hash($password, PASSWORD_BCRYPT);
-        $id = $this->repo->create($mail, $hash, 2);
+        $id = $this->repo->create($mail, $hash, 1);
         return ['ok' => true, 'userId' => $id];
     }
 

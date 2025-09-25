@@ -29,6 +29,11 @@ class UserRepository {
     }
 
     public function create(string $mail, string $passwordHash, int $roleId = 2): int {
+        $roleStmt = $this->db->prepare("SELECT id FROM roles WHERE id = ?");
+        $roleStmt->execute([$roleId]);
+        if (!$roleStmt->fetch()) {
+            throw new \InvalidArgumentException("Role ID $roleId does not exist.");
+        }
         $stmt = $this->db->prepare("INSERT INTO users (mail, password, isActive, roleId) VALUES (?, ?, 1, ?)");
         $stmt->execute([$mail, $passwordHash, $roleId]);
         return (int)$this->db->lastInsertId();

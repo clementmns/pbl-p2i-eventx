@@ -48,14 +48,14 @@ if (preg_match('#^/users/(\d+)$#', $uri, $m)) {
 
 if ($uri === '/auth/register' && $method === 'POST') {
     try {
-        (new AuthController())->register($_POST ?? getJsonBody());
+        (new AuthController())->register(getJsonBody());
     } catch (JsonException $e) {
     }
     exit;
 }
 if ($uri === '/auth/login' && $method === 'POST') {
     try {
-        (new AuthController())->login($_POST ?? getJsonBody());
+        (new AuthController())->login(getJsonBody());
     } catch (JsonException $e) {
     }
     exit;

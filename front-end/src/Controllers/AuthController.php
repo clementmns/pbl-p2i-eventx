@@ -25,7 +25,7 @@ class AuthController
     {
         $apiService = new ApiService();
         if (!empty($mail) && !empty($password)) {
-            $response = $apiService->fetch('/login', 'POST', ['mail' => $mail, 'password' => $password]);
+            $response = $apiService->fetch('/auth/login', 'POST', ['mail' => $mail, 'password' => $password]);
             if (!$response || !isset($response['user_id'])) {
                 echo $this->twig->render('auth/login.twig', ['error' => 'Invalid credentials']);
                 return;
@@ -49,7 +49,7 @@ class AuthController
     {
         $apiService = new ApiService();
         if (!empty($mail) && !empty($password) && $password === $confirm_password) {
-            $response = $apiService->fetch('/register', 'POST', ['mail' => $mail, 'password' => $password]);
+            $response = $apiService->fetch('/auth/register', 'POST', ['mail' => $mail, 'password' => $password]);
             if ($response && isset($response['user_id'])) {
                 header('Location: /login');
                 exit;
