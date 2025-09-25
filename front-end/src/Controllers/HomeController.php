@@ -2,7 +2,6 @@
 namespace Controllers;
 
 use Services\ApiService;
-use Services\SessionManager;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -20,6 +19,21 @@ class HomeController
 
     public function index()
     {
-        echo $this->twig->render('app/home.twig');
+        $eventsResponse = $this->apiService->fetch('/events', 'GET');
+        $events = $eventsResponse ?? [];
+
+        $wishlistsResponse = $this->apiService->fetch('/events/wishlist?userId=' . $_SESSION['user']['id'], 'GET');
+        $wishlist = $wishlistsResponse ?? [];
+
+        $success = $_GET['success'] ?? null;
+        $errors = $_GET['errors'] ?? null;
+
+        echo $this->twig->render('app/home.twig', [
+            'user' => $_SESSION['user'] ?? [],
+            'events' => $events,
+            'wishlist' => $wishlist,
+            'success' => $success,
+            'errors' => $errors
+        ]);
     }
 }

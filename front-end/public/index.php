@@ -51,18 +51,30 @@ $router->post('/settings', function (): void {
 
 // ---------------
 // EVENT ROUTES
-$router->get('/events', function (): void {
-    $controller = new Controllers\EventController();
-    $controller->eventView();
-});
+
 $router->get('/events/create', function (): void {
     $controller = new Controllers\EventController();
     $controller->createEventView();
 });
 
-$router->post('/events', function (): void {
+$router->post('/events/create', function (): void {
     $controller = new Controllers\EventController();
     $controller->createEvent();
+});
+
+$router->get('/events/edit', function (): void {
+    $controller = new Controllers\EventController();
+    $controller->editEventView();
+});
+
+$router->post('/events/edit', function (): void {
+    $controller = new Controllers\EventController();
+    $controller->editEvent();
+});
+
+$router->post('/events/delete', function (): void {
+    $controller = new Controllers\EventController();
+    $controller->deleteEvent();
 });
 
 $router->dispatch();
