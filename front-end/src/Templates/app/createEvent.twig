@@ -1,0 +1,45 @@
+{% extends 'app/base.twig' %}
+
+{% block title %}Create Event - EventX{% endblock %}
+
+{% block content %}
+<div>
+    <h1 class="text-3xl font-bold mb-6">Create Event</h1>
+    <form method="post" action="/create-event" class="space-y-4 w-1/2">
+        <div>
+            <label for="eventName" class="block text-sm font-medium text-gray-700">Event Name</label>
+            <input type="text" name="name" id="eventName" class="mt-1 block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-gray-500 focus:border-gray-500" required>
+        </div>
+        <div>
+            <label for="eventDescription" class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea name="description" id="eventDescription" rows="2" class="mt-1 block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-gray-500 focus:border-gray-500" required></textarea>
+        </div>
+        <div>
+            <label for="eventStartDate" class="block text-sm font-medium text-gray-700">Start Date</label>
+            <input type="date" name="startDate" id="eventStartDate" class="mt-1 block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-gray-500 focus:border-gray-500" required>
+        </div>
+        <div>
+            <label for="eventEndDate" class="block text-sm font-medium text-gray-700">End Date</label>
+            <input type="date" name="endDate" id="eventEndDate" class="mt-1 block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-gray-500 focus:border-gray-500" required>
+        </div>
+        <div>
+            <label for="eventLocation" class="block text-sm font-medium text-gray-700">Location</label>
+            <input type="text" name="location" id="eventLocation" class="mt-1 block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-gray-500 focus:border-gray-500" required>
+        </div>
+        <div class="flex space-x-4">
+            <button type="submit" class="cursor-pointer w-1/2 py-2 px-4 bg-gray-800 text-white font-semibold">Submit Event</button>
+            <button type="button" onclick="window.location.href='/events'" class="cursor-pointer w-1/2 py-2 px-4 bg-gray-600 text-white font-semibold">Cancel</button>
+        </div>
+        {% if errors is defined and errors|length > 0 %}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {{ errors|join(', ') }}
+            </div>
+        {% endif %}
+        {% if success %}
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                {{ success }}
+            </div>
+        {% endif %}
+    </form>
+</div>
+{% endblock %}

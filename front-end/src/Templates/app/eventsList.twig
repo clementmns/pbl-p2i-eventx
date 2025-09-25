@@ -1,0 +1,40 @@
+{% extends 'app/base.twig' %}
+
+{% block title %}Home - EventX{% endblock %}
+
+{% block content %}
+<div>
+    <h1 class="text-3xl font-bold mb-6">Events</h1>
+    <p class="text-gray-700 mb-4">Browse all available events below.</p>
+    <a href="/events/create" class="inline-block bg-gray-800 text-white px-4 py-2 mb-6">
+        Create Event
+    </a>
+    {% if events is defined and events|length > 0 %}
+    <table class="min-w-full border border-gray-300 rounded-lg mb-8">
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="px-4 py-2 text-left">Name</th>
+                <th class="px-4 py-2 text-left">Description</th>
+                <th class="px-4 py-2 text-left">Start Date</th>
+                <th class="px-4 py-2 text-left">End Date</th>
+                <th class="px-4 py-2 text-left">Location</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in events %}
+            <tr class="border-t">
+                <td class="px-4 py-2">{{ event.name }}</td>
+                <td class="px-4 py-2">{{ event.description }}</td>
+                <td class="px-4 py-2">{{ event.startDate }}</td>
+                <td class="px-4 py-2">{{ event.endDate }}</td>
+                <td class="px-4 py-2">{{ event.location }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <div class="text-gray-500 mb-8">No events found.</div>
+    {% endif %}
+</div>
+
+{% endblock %}
