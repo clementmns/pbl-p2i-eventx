@@ -25,6 +25,8 @@ services:
   front-end:
     image: php:8.2-apache
     container_name: eventx_front-end
+    environment:
+      API_URL: http://api/api
     volumes:
       - ./front-end:/var/www/html
     ports:
