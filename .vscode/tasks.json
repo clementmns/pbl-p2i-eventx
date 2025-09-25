@@ -1,0 +1,49 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build SFML App",
+      "type": "shell",
+      "command": "/opt/homebrew/opt/llvm/bin/clang++",
+      "args": [
+        "-std=gnu++17",
+        "-g",
+        "${workspaceFolder}/software/src/main.cpp",
+        "-o",
+        "${workspaceFolder}/software/build/main",
+        "-L/opt/homebrew/lib",
+        "-I/opt/homebrew/include",
+        "-I/opt/homebrew/Cellar/sfml/3.0.2/include",
+        "-L/opt/homebrew/Cellar/sfml/3.0.2/lib",
+        "-lsfml-graphics",
+        "-lsfml-window",
+        "-lsfml-system"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+    },
+    {
+      "label": "Run SFML App",
+      "type": "shell",
+      "command": "${workspaceFolder}/software/build/main",
+      "options": {
+        "cwd": "${workspaceFolder}/software/build",
+        "env": {
+          "DYLD_LIBRARY_PATH": "/opt/homebrew/lib"
+        }
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    }
+  ]
+}

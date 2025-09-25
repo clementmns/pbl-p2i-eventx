@@ -3,6 +3,6 @@
 node_modules
 dist
 coverage
-.vscode
 .idea
+build/
 vendor/
