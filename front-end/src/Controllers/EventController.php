@@ -20,7 +20,7 @@ class EventController
     {
         $apiService = new ApiService();
         $eventsResponse = $apiService->fetch('/events', 'GET');
-        $events = $eventsResponse['data'] ?? [];
+        $events = $eventsResponse ?? [];
         echo $this->twig->render('app/eventsList.twig', [
             'profile' => $_SESSION['profile'] ?? [],
             'events' => $events
