@@ -18,20 +18,20 @@ $router->get('/', function (): void {
 $router->get('/login', function (): void {
     $controller = new AuthController();
     $controller->loginView();
-});
+}, true);
 $router->post('/login', function (): void {
     $controller = new AuthController();
     $controller->login($_POST['mail'] ?? '', $_POST['password'] ?? '');
-});
+}, true);
 
 $router->get('/register', function (): void {
     $controller = new AuthController();
     $controller->registerView();
-});
+}, true);
 $router->post('/register', function (): void {
     $controller = new AuthController();
     $controller->register($_POST['mail'] ?? '', $_POST['password'] ?? '', $_POST['confirm_password'] ?? '');
-});
+}, true);
 
 $router->get('/logout', function (): void {
     $controller = new AuthController();
