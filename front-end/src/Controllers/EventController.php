@@ -39,15 +39,32 @@ class EventController
         $eventData = $_POST;
         $apiService = new ApiService();
         $response = $apiService->fetch('/events', 'POST', $eventData);
-        if ($response && isset($response['success']) && $response['success']) {
+        if (!$response) {
+            $errorMsg = 'Unable to connect to event service. Please try again later.';
+            echo $this->twig->render('app/eventsList.twig', [
+                'errors' => [$errorMsg],
+                'profile' => null
+            ]);
+            return;
+        }
+        if (isset($response['error'])) {
+            $errorMsg = $response['error'];
+            echo $this->twig->render('app/eventsList.twig', [
+                'errors' => [$errorMsg],
+                'profile' => null
+            ]);
+            return;
+        }
+        if (isset($response['success']) && $response['success']) {
             echo $this->twig->render('app/eventsList.twig', [
                 'success' => 'Event created successfully',
                 'profile' => $response['data']
             ]);
             return;
         } else {
+            $errorMsg = 'Event creation failed. Please check your input and try again.';
             echo $this->twig->render('app/eventsList.twig', [
-                'errors' => ['Event creation failed.'],
+                'errors' => [$errorMsg],
                 'profile' => null
             ]);
             return;

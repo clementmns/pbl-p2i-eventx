@@ -1,6 +1,5 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "ui_setup.cpp"
 #include "./pages/login/login.cpp"
 
 int main()

@@ -20,12 +20,6 @@ class HomeController
 
     public function index()
     {
-        // $session = new SessionManager();
-        // $session->start();
-        // if (!$session->get('user_id')) {
-        //     header('Location: /login');
-        //     exit;
-        // }
         echo $this->twig->render('app/home.twig');
     }
 }

@@ -5,7 +5,7 @@
 {% block content %}
 <div>
     <h1 class="text-3xl font-bold mb-6">Create Event</h1>
-    <form method="post" action="/create-event" class="space-y-4 w-1/2">
+    <form method="post" action="/events/create" class="space-y-4 w-1/2">
         <div>
             <label for="eventName" class="block text-sm font-medium text-gray-700">Event Name</label>
             <input type="text" name="name" id="eventName" class="mt-1 block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-gray-500 focus:border-gray-500" required>
@@ -31,8 +31,13 @@
             <button type="button" onclick="window.location.href='/events'" class="cursor-pointer w-1/2 py-2 px-4 bg-gray-600 text-white font-semibold">Cancel</button>
         </div>
         {% if errors is defined and errors|length > 0 %}
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                {{ errors|join(', ') }}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mb-4">
+                <strong>Error:</strong>
+                <ul class="list-disc list-inside">
+                    {% for err in errors %}
+                        <li>{{ err }}</li>
+                    {% endfor %}
+                </ul>
             </div>
         {% endif %}
         {% if success %}

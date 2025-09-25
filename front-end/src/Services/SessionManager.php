@@ -26,4 +26,9 @@ class SessionManager
             session_destroy();
         }
     }
+
+    public function isAuthenticated(): bool
+    {
+        return isset($_SESSION['user']);
+    }
 }
