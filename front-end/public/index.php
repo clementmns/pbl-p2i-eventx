@@ -5,6 +5,7 @@ use FrontEnd\Router;
 use Controllers\HomeController;
 use Controllers\AuthController;
 use Controllers\SettingsController;
+use Controllers\EventController;
 
 $router = new Router();
 
@@ -15,6 +16,7 @@ $router->get('/', function (): void {
 
 // ---------------
 // AUTH ROUTES
+// ---------------
 $router->get('/login', function (): void {
     $controller = new AuthController();
     $controller->loginView();
@@ -40,6 +42,7 @@ $router->get('/logout', function (): void {
 
 // ---------------
 // SETTINGS ROUTES
+// ---------------
 $router->get('/settings', function (): void {
     $controller = new SettingsController();
     $controller->settingsView();
@@ -51,49 +54,49 @@ $router->post('/settings', function (): void {
 
 // ---------------
 // EVENT ROUTES
-
+// ---------------
 $router->get('/events/create', function (): void {
-    $controller = new Controllers\EventController();
+    $controller = new EventController();
     $controller->createEventView();
 });
 
 $router->post('/events/create', function (): void {
-    $controller = new Controllers\EventController();
+    $controller = new EventController();
     $controller->createEvent();
 });
 
 $router->get('/events/edit', function (): void {
-    $controller = new Controllers\EventController();
+    $controller = new EventController();
     $controller->editEventView();
 });
 
 $router->post('/events/edit', function (): void {
-    $controller = new Controllers\EventController();
+    $controller = new EventController();
     $controller->editEvent();
 });
 
 $router->post('/events/delete', function (): void {
-    $controller = new Controllers\EventController();
+    $controller = new EventController();
     $controller->deleteEvent();
 });
 
 $router->post('/events/join', function (): void {
-    $controller = new Controllers\EventController();
+    $controller = new EventController();
     $controller->joinEvent();
 });
 
 $router->post('/events/quit', function (): void {
-    $controller = new Controllers\EventController();
+    $controller = new EventController();
     $controller->quitEvent();
 });
 
 $router->post('/wishlist/add', function (): void {
-    $controller = new Controllers\EventController();
+    $controller = new EventController();
     $controller->addToWishlist();
 });
 
 $router->post('/wishlist/remove', function (): void {
-    $controller = new Controllers\EventController();
+    $controller = new EventController();
     $controller->removeFromWishlist();
 });
 

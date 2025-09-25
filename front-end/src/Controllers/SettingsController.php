@@ -40,6 +40,8 @@ class SettingsController
         }
         $userId = $user['id'];
         $apiService = new ApiService();
+
+        // re-fetch profile to get existing data
         $endpoint = "/profiles/user/{$userId}";
         $response = $apiService->fetch($endpoint, 'PUT', $profileData);
         if (isset($response)) {
@@ -48,14 +50,11 @@ class SettingsController
                 $this->sessionManager->set('user', $updatedUser);
             }
             $this->sessionManager->setFlash('success', 'Profile updated successfully');
-            header('Location: /settings');
+            header('Location: /');
             return;
         } else {
-            $errorMsg = 'Profile update failed. Please check your input and try again.';
-            echo $this->twig->render('app/settings.twig', [
-                'user' => $_SESSION['user'] ?? [],
-                'errors' => [$errorMsg],
-            ]);
+            $this->sessionManager->setFlash('error', 'Profile update failed. Please check your input and try again.');
+            header('Location: /settings');
             return;
         }
     }

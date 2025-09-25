@@ -28,75 +28,60 @@ class AuthController
     public function login($mail, $password)
     {
         $apiService = new ApiService();
-        if (!empty($mail) && !empty($password)) {
-            $response = $apiService->fetch('/auth/login', 'POST', ['mail' => $mail, 'password' => $password]);
-            if (!$response) {
-                $this->sessionManager->setFlash('error', 'Unable to connect to authentication service. Please try again later.');
-                header('Location: /login');
-                return;
-            }
-            if (isset($response['error'])) {
-                $this->sessionManager->setFlash('error', $response['error'] ?? 'An unknown error occurred.');
-                header('Location: /login');
-                return;
-            }
-            if (!isset($response['user'])) {
-                $this->sessionManager->setFlash('error', 'Incorrect email or password. Please check your credentials.');
-                header('Location: /login');
-                return;
-            }
 
-            $session = new SessionManager();
-            $session->start();
-            $session->set('user', $response['user']);
-            header('Location: /');
-            exit;
+        if (empty($mail) || empty($password)) {
+            $this->sessionManager->setFlash('error', 'Please fill in both email and password fields.');
+            header('Location: /login');
+            return;
         }
 
-        echo $this->twig->render('auth/login.twig', ['error' => 'Please fill in both email and password fields.']);
+        $response = $apiService->fetch('/auth/login', 'POST', ['mail' => $mail, 'password' => $password]);
+
+        if (!isset($response['user'])) {
+            $this->sessionManager->setFlash('error', 'Incorrect email or password. Please check your credentials.');
+            header('Location: /login');
+            return;
+        }
+
+        $session = new SessionManager();
+        $session->start();
+        $session->set('user', $response['user']);
+        header('Location: /');
+        exit;
     }
 
     public function registerView()
     {
-        echo $this->twig->render('auth/register.twig');
+        $flash = $this->sessionManager->getFlash();
+        echo $this->twig->render('auth/register.twig', ['flash' => $flash]);
     }
 
     public function register($mail, $password, $confirm_password)
     {
         $apiService = new ApiService();
-        if (!empty($mail) && !empty($password)) {
-            if ($password !== $confirm_password) {
-                $errorMsg = 'Passwords do not match. ' . $password . ' !== ' . $confirm_password;
-                echo $this->twig->render('auth/register.twig', ['error' => $errorMsg]);
-                return;
-            }
-            $response = $apiService->fetch('/auth/register', 'POST', ['mail' => $mail, 'password' => $password]);
-            if (!$response) {
-                $errorMsg = 'Unable to connect to registration service. Please try again later.';
-                echo $this->twig->render('auth/register.twig', ['error' => $errorMsg]);
-                return;
-            }
-            if (isset($response['error'])) {
-                $errorMsg = $response['error'];
-                echo $this->twig->render('auth/register.twig', ['error' => $errorMsg]);
-                return;
-            }
-            if (isset($response['user'])) {
-                $this->login($mail, $password);
-                header('Location: /login');
-                exit;
-            } else {
-                $errorMsg = 'Registration failed. Please check your details and try again.';
-                echo $this->twig->render('auth/register.twig', ['error' => $errorMsg]);
-                return;
-            }
+
+        if (empty($mail) || empty($password)) {
+            $this->sessionManager->setFlash('error', 'Please fill in all required fields.');
+            header('Location: /register');
+            return;
         }
+
         if ($password !== $confirm_password) {
-            $errorMsg = 'Passwords do not match.';
-        } else {
-            $errorMsg = 'Please fill in all required fields.';
+            $this->sessionManager->setFlash('error', 'Passwords do not match.');
+            header('Location: /register');
+            return;
         }
-        echo $this->twig->render('auth/register.twig', ['error' => $errorMsg]);
+
+        $response = $apiService->fetch('/auth/register', 'POST', ['mail' => $mail, 'password' => $password]);
+
+        if (!isset($response['user'])) {
+            $this->sessionManager->setFlash('error', 'Registration failed. Please check your details and try again.');
+            header('Location: /register');
+            return;
+        }
+
+        $this->sessionManager->setFlash('success', 'Registration successful! Please login.');
+        header('Location: /login');
     }
 
     public function logout()

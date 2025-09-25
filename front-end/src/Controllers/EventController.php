@@ -39,6 +39,12 @@ class EventController
             'userId' => $_SESSION['user']['id'] ?? null
         ];
 
+        if ($eventData['startDate'] > $eventData['endDate']) {
+            $this->sessionManager->setFlash('error', 'Start date cannot be after end date.');
+            header('Location: /events/create');
+            return;
+        }
+
         $apiService = new ApiService();
         $response = $apiService->fetch('/events', 'POST', $eventData);
 
@@ -100,6 +106,12 @@ class EventController
             'place' => $_POST['location'] ?? ''
         ];
 
+        if ($eventData['startDate'] > $eventData['endDate']) {
+            $this->sessionManager->setFlash('error', 'Start date cannot be after end date.');
+            header('Location: /events/edit?eventId=' . $eventId);
+            return;
+        }
+
         $apiService = new ApiService();
         $response = $apiService->fetch("/events/{$eventId}", 'PUT', $eventData);
 
@@ -127,15 +139,11 @@ class EventController
             header('Location: /');
             return;
         }
+
         $apiService = new ApiService();
         $response = $apiService->fetch("/events/{$eventId}", 'DELETE');
         if (!$response) {
-            $this->sessionManager->setFlash('error', 'Unable to delete event. Please try again later.');
-            header('Location: /');
-            return;
-        }
-        if (isset($response['error'])) {
-            $this->sessionManager->setFlash('error', $response['error']);
+            $this->sessionManager->setFlash('error', 'Unable to delete event');
             header('Location: /');
             return;
         }
@@ -143,7 +151,6 @@ class EventController
         header('Location: /');
     }
 
-        // Join an event
     public function joinEvent()
     {
         $eventId = $_POST['eventId'] ?? null;
@@ -153,12 +160,13 @@ class EventController
             header('Location: /');
             return;
         }
+
         $apiService = new ApiService();
         $response = $apiService->fetch("/events/{$eventId}/join", 'POST', [
             'userId' => $userId
         ]);
         if (!$response || isset($response['error'])) {
-            $this->sessionManager->setFlash('error', $response['error'] ?? 'Unable to join event.');
+            $this->sessionManager->setFlash('error', 'Unable to join event.');
             header('Location: /');
             return;
         }
@@ -180,7 +188,7 @@ class EventController
             'userId' => $userId
         ]);
         if (!$response || isset($response['error'])) {
-            $this->sessionManager->setFlash('error', $response['error'] ?? 'Unable to quit event.');
+            $this->sessionManager->setFlash('error', 'Unable to quit event.');
             header('Location: /');
             return;
         }
@@ -202,7 +210,7 @@ class EventController
             'userId' => $userId
         ]);
         if (!$response || isset($response['error'])) {
-            $this->sessionManager->setFlash('error', $response['error'] ?? 'Unable to add to wishlist.');
+            $this->sessionManager->setFlash('error', 'Unable to add to wishlist.');
             header('Location: /');
             return;
         }
@@ -224,7 +232,7 @@ class EventController
             'userId' => $userId
         ]);
         if (!$response || isset($response['error'])) {
-            $this->sessionManager->setFlash('error', $response['error'] ?? 'Unable to remove from wishlist.');
+            $this->sessionManager->setFlash('error', 'Unable to remove from wishlist.');
             header('Location: /');
             return;
         }

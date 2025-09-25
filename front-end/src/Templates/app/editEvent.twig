@@ -17,12 +17,28 @@
             <textarea name="description" id="eventDescription" rows="2" class="mt-1 block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-gray-500 focus:border-gray-500" required>{{ event.description }}</textarea>
         </div>
         <div>
-            <label for="eventStartDate" class="block text-sm font-medium text-gray-700">Start Date</label>
-            <input type="date" name="startDate" id="eventStartDate" value="{{ event.startDate|date('Y-m-d') }}" class="mt-1 block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-gray-500 focus:border-gray-500" required>
+            <label for="eventStartDate" class="block text-sm font-medium text-gray-700">Start Date & Time</label>
+            <input
+                type="datetime-local"
+                name="startDate"
+                id="eventStartDate"
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+                required
+                value="{{ event.startDate|date('Y-m-d\TH:i') }}"
+                min="{{ "now"|date('Y-m-d\\TH:i') }}"
+            >
         </div>
         <div>
-            <label for="eventEndDate" class="block text-sm font-medium text-gray-700">End Date</label>
-            <input type="date" name="endDate" id="eventEndDate" value="{{ event.endDate|date('Y-m-d') }}" class="mt-1 block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-gray-500 focus:border-gray-500" required>
+            <label for="eventEndDate" class="block text-sm font-medium text-gray-700">End Date & Time</label>
+            <input
+                type="datetime-local"
+                name="endDate"
+                id="eventEndDate"
+                class="mt-1 block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-gray-500 focus:border-gray-500"
+                required
+                value="{{ event.endDate|date('Y-m-d\TH:i') }}"
+                min="{{ "now"|date('Y-m-d\\TH:i') }}"
+            >
         </div>
         <div>
             <label for="eventLocation" class="block text-sm font-medium text-gray-700">Location</label>
