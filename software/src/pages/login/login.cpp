@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
+#include "ui_setup.cpp"
 #include <string>
 #include <iostream>
-#include "ui_setup.cpp"
 
 void runLogin(sf::RenderWindow& window, sf::Font& font)
 {

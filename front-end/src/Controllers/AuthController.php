@@ -29,8 +29,19 @@ class AuthController
         $apiService = new ApiService();
         if (!empty($mail) && !empty($password)) {
             $response = $apiService->fetch('/auth/login', 'POST', ['mail' => $mail, 'password' => $password]);
-            if (!$response || !isset($response['user'])) {
-                echo $this->twig->render('auth/login.twig', ['error' => 'Invalid credentials']);
+            if (!$response) {
+                $errorMsg = 'Unable to connect to authentication service. Please try again later.';
+                echo $this->twig->render('auth/login.twig', ['error' => $errorMsg]);
+                return;
+            }
+            if (isset($response['error'])) {
+                $errorMsg = $response['error'] ?? 'An unknown error occurred.';
+                echo $this->twig->render('auth/login.twig', ['error' => $errorMsg]);
+                return;
+            }
+            if (!isset($response['user'])) {
+                $errorMsg = 'Incorrect email or password. Please check your credentials.';
+                echo $this->twig->render('auth/login.twig', ['error' => $errorMsg]);
                 return;
             }
 
@@ -41,7 +52,7 @@ class AuthController
             exit;
         }
 
-        echo $this->twig->render('auth/login.twig', ['error' => 'Invalid fields']);
+        echo $this->twig->render('auth/login.twig', ['error' => 'Please fill in both email and password fields.']);
     }
 
     public function registerView()
@@ -54,16 +65,32 @@ class AuthController
         $apiService = new ApiService();
         if (!empty($mail) && !empty($password) && ($password === $confirm_password)) {
             $response = $apiService->fetch('/auth/register', 'POST', ['mail' => $mail, 'password' => $password]);
-            if ($response && isset($response['user'])) {
+            if (!$response) {
+                $errorMsg = 'Unable to connect to registration service. Please try again later.';
+                echo $this->twig->render('auth/register.twig', ['error' => $errorMsg]);
+                return;
+            }
+            if (isset($response['error'])) {
+                $errorMsg = $response['error'];
+                echo $this->twig->render('auth/register.twig', ['error' => $errorMsg]);
+                return;
+            }
+            if (isset($response['user'])) {
                 $this->login($mail, $password);
                 header('Location: /login');
                 exit;
             } else {
-                echo $this->twig->render('auth/register.twig', ['error' => 'Registration failed']);
+                $errorMsg = 'Registration failed. Please check your details and try again.';
+                echo $this->twig->render('auth/register.twig', ['error' => $errorMsg]);
                 return;
             }
         }
-        echo $this->twig->render('auth/register.twig', ['error' => 'Invalid fields']);
+        if ($password !== $confirm_password) {
+            $errorMsg = 'Passwords do not match.';
+        } else {
+            $errorMsg = 'Please fill in all required fields.';
+        }
+        echo $this->twig->render('auth/register.twig', ['error' => $errorMsg]);
     }
 
     public function logout()

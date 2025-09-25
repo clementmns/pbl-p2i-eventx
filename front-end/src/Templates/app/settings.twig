@@ -31,8 +31,13 @@
             <button type="button" onclick="window.location.href='/events'" class="cursor-pointer w-1/2 py-2 px-4 bg-gray-600 text-white font-semibold">Cancel</button>
         </div>
         {% if errors is defined and errors|length > 0 %}
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                {{ errors|join(', ') }}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mb-4">
+                <strong>Error:</strong>
+                <ul class="list-disc list-inside">
+                    {% for err in errors %}
+                        <li>{{ err }}</li>
+                    {% endfor %}
+                </ul>
             </div>
         {% endif %}
         {% if success %}

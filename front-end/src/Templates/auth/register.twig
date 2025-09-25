@@ -7,7 +7,9 @@
     <div class="w-full max-w-md p-8 flex flex-col items-center border border-gray-300">
         <h1 class="text-3xl font-bold text-gray-800 mb-6">EventX - Register</h1>
         {% if error %}
-            <p class="mb-4 text-red-600 text-center">{{ error }}</p>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mb-4">
+                <strong>Error:</strong> {{ error }}
+            </div>
         {% endif %}
         <form method="post" action="/register" class="space-y-4 w-full">
             <div>
