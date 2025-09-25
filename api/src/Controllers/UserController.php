@@ -23,7 +23,7 @@ class UserController {
             Response::json(['error' => $res['error']], 400);
             return;
         }
-        Response::json(['userId' => $res['userId']], 201);
+        Response::json(['user' => $res['user']], 201);
     }
 
     public function login(array $data): void {
@@ -38,7 +38,7 @@ class UserController {
             Response::json(['error' => $res['error']], 401);
             return;
         }
-        Response::json(['userId' => $res['userId']], 200);
+        Response::json(['user' => $res['user']], 200);
     }
 
     public function listUsers(): void {

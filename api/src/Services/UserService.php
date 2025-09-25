@@ -19,7 +19,9 @@ class UserService {
         }
         $hash = password_hash($password, PASSWORD_BCRYPT);
         $id = $this->repo->create($mail, $hash, 1);
-        return ['ok' => true, 'userId' => $id];
+        $user = $this->repo->findById($id);
+        $user->passwordHash = '***';
+        return ['ok' => true, 'user' => $user];
     }
 
     public function login(string $mail, string $password): array {
@@ -27,7 +29,8 @@ class UserService {
         if (!$user || !password_verify($password, $user->passwordHash)) {
             return ['ok' => false, 'error' => 'invalid_credentials'];
         }
-        return ['ok' => true, 'userId' => $user->id];
+        $user->passwordHash = '***';
+        return ['ok' => true, 'user' => $user];
     }
 
     public function getAllUsers(): array {

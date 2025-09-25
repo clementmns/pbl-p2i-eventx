@@ -32,7 +32,7 @@ class AuthController {
 
         Response::json([
             'message' => 'User registered successfully',
-            'userId'  => $result['userId']
+            'user'  => $result['user']
         ], 201);
     }
 
@@ -57,7 +57,7 @@ class AuthController {
 
         Response::json([
             'message' => 'Login successful',
-            'userId'  => $result['userId']
+            'user'  => $result['user']
         ], 200);
     }
 }
