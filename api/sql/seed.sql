@@ -32,7 +32,7 @@ INSERT INTO roles (id, name) VALUES
 	ON DUPLICATE KEY UPDATE name=VALUES(name);
 
 INSERT INTO users (id, mail, password, created_at, update_at, isActive, roleId) VALUES
-	(1, 'admin@admin.com', '$2y$10$wH8Qw6Qw6Qw6Qw6Qw6Qw6eQw6Qw6Qw6Qw6Qw6Qw6Qw6Qw6Qw6', '2025-09-25 10:00:00', '2025-09-25 10:00:00', 1, 2),
+	(1, 'admin@admin.com', '$2y$10$J17LRoO8EsdMlyT/7OzlrejK0u3OF0/2HvC8pBfWK78eyBsTMZMyy', '2025-09-25 10:00:00', '2025-09-25 10:00:00', 1, 2),
 	(2, 'user@user.com', '$2y$10$abcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdefabcdef', '2025-09-25 11:00:00', '2025-09-25 11:00:00', 1, 1),
 	(3, 'mod1@site.com', '$2y$10$mod1mod1mod1mod1mod1mod1mod1mod1mod1mod1mod1mod1mod1', '2025-09-25 12:00:00', '2025-09-25 12:00:00', 1, 3),
 	(4, 'guest1@site.com', '$2y$10$guest1guest1guest1guest1guest1guest1guest1guest1', '2025-09-25 13:00:00', '2025-09-25 13:00:00', 1, 4),

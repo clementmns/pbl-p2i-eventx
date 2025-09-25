@@ -17,7 +17,8 @@
         "-L/opt/homebrew/Cellar/sfml/3.0.2/lib",
         "-lsfml-graphics",
         "-lsfml-window",
-        "-lsfml-system"
+        "-lsfml-system",
+        "-lsfml-network"
       ],
       "group": {
         "kind": "build",
