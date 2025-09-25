@@ -63,7 +63,12 @@ class AuthController
     public function register($mail, $password, $confirm_password)
     {
         $apiService = new ApiService();
-        if (!empty($mail) && !empty($password) && ($password === $confirm_password)) {
+        if (!empty($mail) && !empty($password)) {
+            if ($password !== $confirm_password) {
+                $errorMsg = 'Passwords do not match. ' . $password . ' !== ' . $confirm_password;
+                echo $this->twig->render('auth/register.twig', ['error' => $errorMsg]);
+                return;
+            }
             $response = $apiService->fetch('/auth/register', 'POST', ['mail' => $mail, 'password' => $password]);
             if (!$response) {
                 $errorMsg = 'Unable to connect to registration service. Please try again later.';
