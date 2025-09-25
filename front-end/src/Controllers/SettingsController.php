@@ -23,6 +23,7 @@ class SettingsController
     {
         $flash = $this->sessionManager->getFlash();
         echo $this->twig->render('app/settings.twig', [
+            'profile' => $_SESSION['user']['profile'] ?? [],
             'user' => $_SESSION['user'] ?? [],
             'flash' => $flash
         ]);
