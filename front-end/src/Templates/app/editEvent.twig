@@ -1,0 +1,46 @@
+{% extends 'app/base.twig' %}
+
+{% block title %}Edit Event - EventX{% endblock %}
+
+{% block content %}
+<div>
+    {% if success %}
+        {% include 'components/toast.twig' with { type: 'success', message: success } %}
+    {% endif %}
+    {% if error %}
+        {% include 'components/toast.twig' with { type: 'error', message: error } %}
+    {% endif %}
+    <h1 class="text-3xl font-bold mb-6">Edit Event</h1>
+    {% if event %}
+    <form method="post" action="/events/edit" class="space-y-4 w-1/2">
+        <input type="hidden" name="eventId" value="{{ event.id }}">
+        <div>
+            <label for="eventName" class="block text-sm font-medium text-gray-700">Event Name</label>
+            <input type="text" name="name" id="eventName" value="{{ event.name }}" class="mt-1 block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-gray-500 focus:border-gray-500" required>
+        </div>
+        <div>
+            <label for="eventDescription" class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea name="description" id="eventDescription" rows="2" class="mt-1 block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-gray-500 focus:border-gray-500" required>{{ event.description }}</textarea>
+        </div>
+        <div>
+            <label for="eventStartDate" class="block text-sm font-medium text-gray-700">Start Date</label>
+            <input type="date" name="startDate" id="eventStartDate" value="{{ event.startDate|date('Y-m-d') }}" class="mt-1 block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-gray-500 focus:border-gray-500" required>
+        </div>
+        <div>
+            <label for="eventEndDate" class="block text-sm font-medium text-gray-700">End Date</label>
+            <input type="date" name="endDate" id="eventEndDate" value="{{ event.endDate|date('Y-m-d') }}" class="mt-1 block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-gray-500 focus:border-gray-500" required>
+        </div>
+        <div>
+            <label for="eventLocation" class="block text-sm font-medium text-gray-700">Location</label>
+            <input type="text" name="location" id="eventLocation" value="{{ event.place }}" class="mt-1 block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-gray-500 focus:border-gray-500" required>
+        </div>
+        <div class="flex space-x-4">
+            <button type="submit" class="cursor-pointer w-1/2 py-2 px-4 bg-gray-800 text-white font-semibold">Update Event</button>
+            <button type="button" onclick="window.location.href='/'" class="cursor-pointer w-1/2 py-2 px-4 bg-gray-600 text-white font-semibold">Cancel</button>
+        </div>
+    </form>
+    {% else %}
+    <p class="text-red-500">Event not found.</p>
+    {% endif %}
+</div>
+{% endblock %}
