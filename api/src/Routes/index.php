@@ -36,3 +36,10 @@ if ($uri === '/users' && $method === 'GET') {
     (new UserController())->listUsers();
     exit;
 }
+
+if (preg_match('#^/users/(\d+)$#', $uri, $m)) {
+    $id = (int)$m[1];
+    if ($method === 'GET') { (new UserController())->getUser($id); exit; }
+    if ($method === 'PUT') { (new UserController())->updateUser($id, getJsonBody()); exit; }
+    if ($method === 'DELETE') { (new UserController())->deleteUser($id); exit; }
+}
