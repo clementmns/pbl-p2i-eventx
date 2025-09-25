@@ -17,7 +17,14 @@ class UserRepository {
         $stmt->execute([$id]);
         $row = $stmt->fetch();
         if (!$row) return null;
-        return new User((int)$row['id'], $row['mail'], $row['password'], (bool)$row['isActive'], isset($row['role_id']) ? (int)$row['role_id'] : null);
+        $user = new User((int)$row['id'], $row['mail'], $row['password'], (bool)$row['isActive'], isset($row['role_id']) ? (int)$row['role_id'] : null);
+        $profileStmt = $this->db->prepare("SELECT * FROM profiles WHERE userId = ?");
+        $profileStmt->execute([$user->id]);
+        $profileRow = $profileStmt->fetch();
+        if ($profileRow) {
+            $user->profile = $profileRow;
+        }
+        return $user;
     }
 
     public function findByMail(string $mail): ?User {
@@ -25,7 +32,14 @@ class UserRepository {
         $stmt->execute([$mail]);
         $row = $stmt->fetch();
         if (!$row) return null;
-        return new User((int)$row['id'], $row['mail'], $row['password'], (bool)$row['isActive'], isset($row['role_id']) ? (int)$row['role_id'] : null);
+        $user = new User((int)$row['id'], $row['mail'], $row['password'], (bool)$row['isActive'], isset($row['role_id']) ? (int)$row['role_id'] : null);
+        $profileStmt = $this->db->prepare("SELECT * FROM profiles WHERE userId = ?");
+        $profileStmt->execute([$user->id]);
+        $profileRow = $profileStmt->fetch();
+        if ($profileRow) {
+            $user->profile = $profileRow;
+        }
+        return $user;
     }
 
     public function create(string $mail, string $passwordHash, int $roleId = 2): int {

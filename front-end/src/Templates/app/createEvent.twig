@@ -7,8 +7,8 @@
     {% if success %}
         {% include 'components/toast.twig' with { type: 'success', message: success } %}
     {% endif %}
-    {% if error %}
-        {% include 'components/toast.twig' with { type: 'error', message: error } %}
+    {% if errors %}
+        {% include 'components/toast.twig' with { type: 'error', message: errors } %}
     {% endif %}
     <h1 class="text-3xl font-bold mb-6">Create Event</h1>
     <form method="post" action="/events/create" class="space-y-4 w-1/2">

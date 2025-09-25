@@ -32,7 +32,9 @@ class Event {
             'startDate' => $this->startDate,
             'endDate' => $this->endDate,
             'place' => $this->place,
-            'userId' => $this->userId
+            'userId' => $this->userId,
+            'registeredCount' => $this->registeredCount,
+            'wishlistCount' => $this->wishlistCount
         ];
     }
 }

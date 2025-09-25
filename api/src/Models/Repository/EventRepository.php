@@ -14,7 +14,7 @@ class EventRepository {
 
     public function findAll(): array {
         $stmt = $this->db->query("
-        SELECT e.*, 
+        SELECT e.*,
                (SELECT COUNT(*) FROM registrations r WHERE r.idEvent = e.id) AS registeredCount,
                (SELECT COUNT(*) FROM wishlists w WHERE w.idEvent = e.id) AS wishlistCount
         FROM events e
@@ -26,7 +26,7 @@ class EventRepository {
 
     public function findById(int $id): ?Event {
         $stmt = $this->db->prepare("
-        SELECT e.*, 
+        SELECT e.*,
                (SELECT COUNT(*) FROM registrations r WHERE r.idEvent = e.id) AS registeredCount,
                (SELECT COUNT(*) FROM wishlists w WHERE w.idEvent = e.id) AS wishlistCount
         FROM events e
@@ -36,6 +36,31 @@ class EventRepository {
         $r = $stmt->fetch();
         if (!$r) return null;
         return new Event((int)$r['id'], $r['name'], $r['description'], $r['startDate'], $r['endDate'], $r['place'], (int)$r['userId'], (int)$r['registeredCount'], (int)$r['wishlistCount']);
+    }
+
+    public function findJoinedByUser(int $userId): array {
+        $stmt = $this->db->prepare("
+        SELECT e.*,
+               (SELECT COUNT(*) FROM registrations r WHERE r.idEvent = e.id) AS registeredCount,
+               (SELECT COUNT(*) FROM wishlists w WHERE w.idEvent = e.id) AS wishlistCount
+        FROM events e
+        INNER JOIN registrations r ON e.id = r.idEvent
+        WHERE r.idUser = ?
+        ORDER BY e.startDate ASC
+    ");
+        $stmt->execute([$userId]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_map(fn($r) => new Event(
+            (int)$r['id'],
+            $r['name'],
+            $r['description'],
+            $r['startDate'],
+            $r['endDate'],
+            $r['place'],
+            (int)$r['userId'],
+            (int)$r['registeredCount'],
+            (int)$r['wishlistCount']
+        ), $rows);
     }
 
     public function create(array $data): int {
@@ -104,7 +129,7 @@ class EventRepository {
 
     public function findWishlistByUser(int $userId): array {
         $stmt = $this->db->prepare("
-        SELECT e.*, 
+        SELECT e.*,
                (SELECT COUNT(*) FROM registrations r WHERE r.idEvent = e.id) AS registeredCount,
                (SELECT COUNT(*) FROM wishlists w2 WHERE w2.idEvent = e.id) AS wishlistCount
         FROM events e

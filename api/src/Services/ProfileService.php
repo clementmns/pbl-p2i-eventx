@@ -18,14 +18,16 @@ class ProfileService {
         return $this->repo->findByUserId($userId)?->toArray();
     }
 
-    public function createProfile(array $data) {
-        if (empty($data['userId'])) return ['ok'=>false,'error'=>'missing_userId'];
-        $id = $this->repo->create($data);
-        return ['ok'=>true, 'id'=>$id];
-    }
-
-    public function updateProfile(int $id, array $data) {
-        return ['ok'=>$this->repo->update($id, $data)];
+    public function upsertProfile(int $userId, array $data) {
+        $profile = $this->repo->findByUserId($userId);
+        if ($profile) {
+            $ok = $this->repo->update($profile->id, $data);
+            return ['ok'=>$ok, 'action'=>'updated', 'id'=>$profile->id];
+        } else {
+            $data['userId'] = $userId;
+            $id = $this->repo->create($data);
+            return ['ok'=>true, 'action'=>'created', 'id'=>$id];
+        }
     }
 
     public function deleteProfile(int $id) {

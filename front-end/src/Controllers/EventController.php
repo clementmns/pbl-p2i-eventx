@@ -122,28 +122,105 @@ class EventController
     {
         $eventId = $_POST['eventId'] ?? null;
         if (!$eventId) {
-            $_SESSION['flash_error'] = 'Event ID is required.';
-            header('Location: /');
-            exit;
+            header('Location: /?errors=Unable to delete event. Please try again later.');
+            return;
         }
-
         $apiService = new ApiService();
         $response = $apiService->fetch("/events/{$eventId}", 'DELETE');
-
         if (!$response) {
-            $_SESSION['flash_error'] = 'Unable to delete event. Please try again later.';
-            header('Location: /');
-            exit;
+            header('Location: /?errors=Unable to delete event. Please try again later.');
+            return;
         }
-
         if (isset($response['error'])) {
-            $_SESSION['flash_error'] = $response['error'];
-            header('Location: /');
-            exit;
+            echo $this->twig->render('app/home.twig', [
+                'errors' => [$response['error']]
+            ]);
+            return;
         }
+        header('Location: /?success=Event deleted successfully!');
+    }
 
-        $_SESSION['flash_success'] = 'Event deleted successfully!';
-        header('Location: /');
-        exit;
+        // Join an event
+    public function joinEvent()
+    {
+        $eventId = $_POST['eventId'] ?? null;
+        $userId = $_SESSION['user']['id'] ?? null;
+        if (!$eventId || !$userId) {
+            header('Location: /?errors=Unable to join event.');
+            return;
+        }
+        $apiService = new ApiService();
+        $response = $apiService->fetch("/events/{$eventId}/join", 'POST', [
+            'userId' => $userId
+        ]);
+        if (!$response || isset($response['error'])) {
+            header('Location: /?errors=Unable to join event.');
+            return;
+        }
+        header('Location: /?success=Joined event successfully!');
+    }
+
+        // Quit an event
+    public function quitEvent()
+    {
+        $eventId = $_POST['eventId'] ?? null;
+        $userId = $_SESSION['user']['id'] ?? null;
+        if (!$eventId || !$userId) {
+            header('Location: /?errors=Unable to quit event.');
+            return;
+        }
+        $apiService = new ApiService();
+        $response = $apiService->fetch("/events/{$eventId}/quit", 'POST', [
+            'userId' => $userId
+        ]);
+        if (!$response || isset($response['error'])) {
+            header('Location: /?errors=Unable to quit event.');
+            return;
+        }
+        header('Location: /?success=Quit event successfully!');
+    }
+
+        // Add event to wishlist
+    public function addToWishlist()
+    {
+        $eventId = $_POST['eventId'] ?? null;
+        $userId = $_SESSION['user']['id'] ?? null;
+        if (!$eventId || !$userId) {
+            header('Location: /?errors=Unable to add to wishlist.');
+            return;
+        }
+        $apiService = new ApiService();
+        $response = $apiService->fetch("/events/{$eventId}/wishlist/add", 'POST', [
+            'userId' => $userId
+        ]);
+        if (!$response || isset($response['error'])) {
+            header('Location: /?errors=Unable to add to wishlist.');
+            return;
+        }
+        header('Location: /?success=Added to wishlist!');
+    }
+
+        // Remove event from wishlist
+    public function removeFromWishlist()
+    {
+        $eventId = $_POST['eventId'] ?? null;
+        $userId = $_SESSION['user']['id'] ?? null;
+        if (!$eventId || !$userId) {
+            echo $this->twig->render('app/home.twig', [
+                'errors' => ['Event ID and User ID are required.']
+            ]);
+            return;
+        }
+        $apiService = new ApiService();
+        $response = $apiService->fetch("/events/{$eventId}/wishlist/remove", 'POST', [
+            'userId' => $userId
+        ]);
+        if (!$response || isset($response['error'])) {
+            echo $this->twig->render('app/home.twig', [
+                'errors' => [$response['error'] ?? 'Unable to remove from wishlist.']
+            ]);
+            return;
+        }
+        header('Location: /?success=Removed from wishlist!');
     }
 }

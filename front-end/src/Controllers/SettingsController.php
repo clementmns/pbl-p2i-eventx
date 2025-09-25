@@ -19,45 +19,43 @@ class SettingsController
     public function settingsView()
     {
         echo $this->twig->render('app/settings.twig', [
-            'profile' => $_SESSION['profile'] ?? []
+            'profile' => $_SESSION['user']['profile'] ?? []
         ]);
     }
 
     public function settings()
     {
         $profileData = $_POST;
+        $sessionManager = new SessionManager();
+        $user = $sessionManager->get('user');
+        if (!$user || !isset($user['id'])) {
+            echo $this->twig->render('app/settings.twig', [
+                'errors' => ['User not authenticated'],
+                'profile' => null
+            ]);
+            return;
+        }
+        $userId = $user['id'];
         $apiService = new ApiService();
-        $response = $apiService->fetch('/settings', 'POST', $profileData);
-        if (!$response) {
-            $errorMsg = 'Unable to connect to settings service. Please try again later.';
+        $endpoint = "/profiles/user/{$userId}";
+        $response = $apiService->fetch($endpoint, 'PUT', $profileData);
+        if (isset($response)) {
+            $updatedUser = $apiService->fetch("/users/{$userId}", 'GET');
+            if ($updatedUser) {
+                $sessionManager->set('user', $updatedUser);
+            }
             echo $this->twig->render('app/settings.twig', [
-                'errors' => [$errorMsg],
-                'profile' => null
-            ]);
-            return;
-        }
-        if (isset($response['error'])) {
-            $errorMsg = $response['error'] ?? 'An unknown error occurred.';
-            echo $this->twig->render('app/settings.twig', [
-                'errors' => [$errorMsg],
-                'profile' => null
-            ]);
-            return;
-        }
-        if (isset($response['success']) && $response['success']) {
-            echo $this->twig->render('app/settings.twig', [
-                'success' => 'Settings updated successfully',
-                'profile' => $response['data']
+                'success' => 'Profile updated successfully',
+                'profile' => $profileData
             ]);
             return;
         } else {
-            $errorMsg = 'Settings update failed. Please check your input and try again.';
+            $errorMsg = 'Profile update failed. Please check your input and try again.';
             echo $this->twig->render('app/settings.twig', [
                 'errors' => [$errorMsg],
                 'profile' => null
             ]);
             return;
         }
-
     }
 }

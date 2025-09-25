@@ -77,4 +77,24 @@ $router->post('/events/delete', function (): void {
     $controller->deleteEvent();
 });
 
+$router->post('/events/join', function (): void {
+    $controller = new Controllers\EventController();
+    $controller->joinEvent();
+});
+
+$router->post('/events/quit', function (): void {
+    $controller = new Controllers\EventController();
+    $controller->quitEvent();
+});
+
+$router->post('/wishlist/add', function (): void {
+    $controller = new Controllers\EventController();
+    $controller->addToWishlist();
+});
+
+$router->post('/wishlist/remove', function (): void {
+    $controller = new Controllers\EventController();
+    $controller->removeFromWishlist();
+});
+
 $router->dispatch();

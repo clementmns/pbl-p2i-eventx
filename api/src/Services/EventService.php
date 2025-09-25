@@ -18,6 +18,10 @@ class EventService {
         return $this->repo->findById($id)?->toArray();
     }
 
+    public function getEventsJoinedByUser(int $userId): array {
+        return array_map(fn($e) => $e->toArray(), $this->repo->findJoinedByUser($userId));
+    }
+
     public function createEvent(array $data) {
         if (empty($data['name']) || empty($data['startDate']) || empty($data['endDate']) || empty($data['place']) || empty($data['userId'])) {
             return ['ok'=>false,'error'=>'invalid_data'];

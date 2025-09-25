@@ -28,15 +28,11 @@ class ProfileController {
     /**
      * @throws JsonException
      */
-    public function createProfile(array $data) {
-        echo json_encode($this->service->createProfile($data), JSON_THROW_ON_ERROR);
-    }
-
     /**
      * @throws JsonException
      */
-    public function updateProfile(int $id, array $data) {
-        echo json_encode($this->service->updateProfile($id, $data), JSON_THROW_ON_ERROR);
+    public function upsertProfile(int $userId, array $data) {
+        echo json_encode($this->service->upsertProfile($userId, $data), JSON_THROW_ON_ERROR);
     }
 
     /**
