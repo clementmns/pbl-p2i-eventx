@@ -1,80 +1,64 @@
 <?php
-
 namespace App\Controllers;
+
 use App\Services\UserService;
-use Exception;
+use App\Utils\Response;
 
-class UserController
-{
-    private $service;
+class UserController {
+    private UserService $svc;
 
-    public function __construct(UserService $service)
-    {
-        $this->service = $service;
+    public function __construct() {
+        $this->svc = new UserService();
     }
 
-    /**
-     * Handle user registration.
-     */
-    public function register(array $request): array
-    {
-        $body = $request['body'] ?? [];
-        $email = $body['mail'] ?? '';
-        $password = $body['password'] ?? '';
-        $isAdmin = false;
-        $createdAt = new \DateTime();
-        $roleId = 1;
-
-        if (!$email || !$password) {
-            return [
-                'status' => 400,
-                'data' => ['error' => 'Missing required fields']
-            ];
+    public function register(array $data): void {
+        $mail = $data['mail'] ?? null;
+        $pass = $data['password'] ?? null;
+        if (!$mail || !$pass) {
+            Response::json(['error' => 'mail_and_password_required'], 400);
+            return;
         }
-
-        try {
-            $id = $this->service->registerUser($email, $password, $isAdmin, $createdAt, $roleId);
-            return [
-                'status' => 201,
-                'data' => ['id' => $id]
-            ];
-        } catch (Exception $e) {
-            return [
-                'status' => 409,
-                'data' => ['error' => "Unexpected error occurred"]
-            ];
+        $res = $this->svc->register($mail, $pass);
+        if (!$res['ok']) {
+            Response::json(['error' => $res['error']], 400);
+            return;
         }
+        Response::json(['userId' => $res['userId']], 201);
     }
 
-    public function getUser(string $userId): array
-    {
-        if (!$userId) {
-            return [
-                'status' => 400,
-                'data' => ['error' => 'User ID is required']
-            ];
+    public function login(array $data): void {
+        $mail = $data['mail'] ?? null;
+        $pass = $data['password'] ?? null;
+        if (!$mail || !$pass) {
+            Response::json(['error' => 'mail_and_password_required'], 400);
+            return;
         }
+        $res = $this->svc->login($mail, $pass);
+        if (!$res['ok']) {
+            Response::json(['error' => $res['error']], 401);
+            return;
+        }
+        Response::json(['userId' => $res['userId']], 200);
+    }
 
-        $user = $this->service->getUser(userId: (int) $userId);
+    public function listUsers(): void {
+        Response::json($this->svc->getAllUsers());
+    }
+
+    public function getUser(int $id): void {
+        $user = $this->svc->getUser($id);
         if (!$user) {
-            return [
-                'status' => 404,
-                'data' => ['error' => 'User not found']
-            ];
+            Response::json(['error' => 'not_found'], 404);
+            return;
         }
+        Response::json($user);
+    }
 
-        $userResponse = [
-            'id' => $user->getId(),
-            'mail' => $user->getMail(),
-            'isActive' => $user->isActive(),
-            'createdAt' => $user->getCreatedAt()->format('Y-m-d H:i:s'),
-            'updatedAt' => $user->getUpdatedAt() ? $user->getUpdatedAt()->format('Y-m-d H:i:s') : null,
-            'roleId' => $user->getRoleId()
-        ];
+    public function updateUser(int $id, array $data): void {
+        Response::json(['ok' => $this->svc->updateUser($id, $data)]);
+    }
 
-        return [
-            'status' => 200,
-            'data' => $userResponse
-        ];
+    public function deleteUser(int $id): void {
+        Response::json(['ok' => $this->svc->deleteUser($id)]);
     }
 }

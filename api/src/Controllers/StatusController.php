@@ -7,7 +7,7 @@ class StatusController
     /**
      * Get the current status of the application.
      */
-    public function getStatus()
+    public function getStatus(): array
     {
         return [
             'status' => 'ok',
