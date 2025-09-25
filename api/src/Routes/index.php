@@ -3,6 +3,7 @@
 namespace App\Routes;
 
 use App\Controllers\AuthController;
+use App\Controllers\ProfileController;
 use App\Controllers\StatusController;
 use App\Controllers\UserController;
 use App\Controllers\EventController;
@@ -136,3 +137,39 @@ if ($uri === '/events/wishlist' && $method === 'GET') {
 try {
     Response::json(['error' => 'Route not found'], 404);
 } catch (JsonException $e) {}
+
+// ----------- Profile ----------
+if ($uri === '/profiles' && $method === 'POST') {
+    try {
+        (new ProfileController())->createProfile(getJsonBody());
+    } catch (JsonException $e) {}
+    exit;
+}
+
+if (preg_match('#^/profiles/(\d+)$#', $uri, $m)) {
+    $id = (int)$m[1];
+    if ($method === 'GET') {
+        try {
+            (new ProfileController())->getProfile($id);
+        } catch (JsonException $e) {}
+        exit; }
+    if ($method === 'PUT') {
+        try {
+            (new ProfileController())->updateProfile($id, getJsonBody());
+        } catch (JsonException $e) {}
+        exit; }
+    if ($method === 'DELETE') {
+        try {
+            (new ProfileController())->deleteProfile($id);
+        } catch (JsonException $e) {}
+        exit; }
+}
+
+if (preg_match('#^/profiles/user/(\d+)$#', $uri, $m)) {
+    $userId = (int)$m[1];
+    if ($method === 'GET') {
+        try {
+            (new ProfileController())->getProfileByUser($userId);
+        } catch (JsonException $e) {}
+        exit; }
+}

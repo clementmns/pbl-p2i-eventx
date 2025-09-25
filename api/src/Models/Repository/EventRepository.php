@@ -13,17 +13,29 @@ class EventRepository {
     }
 
     public function findAll(): array {
-        $stmt = $this->db->query("SELECT * FROM events ORDER BY startDate ASC");
+        $stmt = $this->db->query("
+        SELECT e.*, 
+               (SELECT COUNT(*) FROM registrations r WHERE r.idEvent = e.id) AS registeredCount,
+               (SELECT COUNT(*) FROM wishlists w WHERE w.idEvent = e.id) AS wishlistCount
+        FROM events e
+        ORDER BY e.startDate ASC
+    ");
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return array_map(fn($r) => new Event((int)$r['id'],$r['name'],$r['description'],$r['startDate'],$r['endDate'],$r['place'],(int)$r['userId']), $rows);
+        return array_map(fn($r) => new Event((int)$r['id'], $r['name'], $r['description'], $r['startDate'], $r['endDate'], $r['place'], (int)$r['userId'], (int)$r['registeredCount'], (int)$r['wishlistCount']), $rows);
     }
 
     public function findById(int $id): ?Event {
-        $stmt = $this->db->prepare("SELECT * FROM events WHERE id = ?");
+        $stmt = $this->db->prepare("
+        SELECT e.*, 
+               (SELECT COUNT(*) FROM registrations r WHERE r.idEvent = e.id) AS registeredCount,
+               (SELECT COUNT(*) FROM wishlists w WHERE w.idEvent = e.id) AS wishlistCount
+        FROM events e
+        WHERE e.id = ?
+    ");
         $stmt->execute([$id]);
         $r = $stmt->fetch();
         if (!$r) return null;
-        return new Event((int)$r['id'],$r['name'],$r['description'],$r['startDate'],$r['endDate'],$r['place'],(int)$r['userId']);
+        return new Event((int)$r['id'], $r['name'], $r['description'], $r['startDate'], $r['endDate'], $r['place'], (int)$r['userId'], (int)$r['registeredCount'], (int)$r['wishlistCount']);
     }
 
     public function create(array $data): int {
@@ -92,7 +104,9 @@ class EventRepository {
 
     public function findWishlistByUser(int $userId): array {
         $stmt = $this->db->prepare("
-        SELECT e.* 
+        SELECT e.*, 
+               (SELECT COUNT(*) FROM registrations r WHERE r.idEvent = e.id) AS registeredCount,
+               (SELECT COUNT(*) FROM wishlists w2 WHERE w2.idEvent = e.id) AS wishlistCount
         FROM events e
         INNER JOIN wishlists w ON e.id = w.idEvent
         WHERE w.idUser = ?
@@ -100,7 +114,7 @@ class EventRepository {
     ");
         $stmt->execute([$userId]);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return array_map(fn($r) => new Event((int)$r['id'],$r['name'],$r['description'],$r['startDate'],$r['endDate'],$r['place'],(int)$r['userId']), $rows);
+        return array_map(fn($r) => new Event((int)$r['id'], $r['name'], $r['description'], $r['startDate'], $r['endDate'], $r['place'], (int)$r['userId'], (int)$r['registeredCount'], (int)$r['wishlistCount']), $rows);
     }
 
 }

@@ -9,8 +9,10 @@ class Event {
     public string $endDate;
     public string $place;
     public int $userId;
+    public int $registeredCount = 0;
+    public int $wishlistCount = 0;
 
-    public function __construct(?int $id, string $name, ?string $description, string $startDate, string $endDate, string $place, int $userId) {
+    public function __construct(?int $id, string $name, ?string $description, string $startDate, string $endDate, string $place, int $userId, int $registeredCount = 0, int $wishlistCount = 0) {
         $this->id = $id;
         $this->name = $name;
         $this->description = $description;
@@ -18,6 +20,8 @@ class Event {
         $this->endDate = $endDate;
         $this->place = $place;
         $this->userId = $userId;
+        $this->registeredCount = $registeredCount;
+        $this->wishlistCount = $wishlistCount;
     }
 
     public function toArray(): array {
