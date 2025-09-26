@@ -36,7 +36,6 @@ class EventController
             'startDate' => $_POST['startDate'] ?? '',
             'endDate' => $_POST['endDate'] ?? '',
             'place' => $_POST['location'] ?? '',
-            'userId' => $_SESSION['user']['id'] ?? null
         ];
 
         if ($eventData['startDate'] > $eventData['endDate']) {
@@ -117,13 +116,13 @@ class EventController
 
         if (!$response) {
             $this->sessionManager->setFlash('error', 'Unable to update event. Please try again later.');
-            header('Location: /events/' . $eventId . '/edit');
+            header('Location: /events/edit?eventId=' . $eventId);
             return;
         }
 
         if (isset($response['error'])) {
             $this->sessionManager->setFlash('error', $response['error']);
-            header('Location: /events/' . $eventId . '/edit');
+            header('Location: /events/edit?eventId=' . $eventId);
             return;
         }
 
@@ -162,9 +161,7 @@ class EventController
         }
 
         $apiService = new ApiService();
-        $response = $apiService->fetch("/events/{$eventId}/join", 'POST', [
-            'userId' => $userId
-        ]);
+        $response = $apiService->fetch("/events/{$eventId}/join", 'POST');
         if (!$response || isset($response['error'])) {
             $this->sessionManager->setFlash('error', 'Unable to join event.');
             header('Location: /');
@@ -184,9 +181,7 @@ class EventController
             return;
         }
         $apiService = new ApiService();
-        $response = $apiService->fetch("/events/{$eventId}/quit", 'POST', [
-            'userId' => $userId
-        ]);
+        $response = $apiService->fetch("/events/{$eventId}/quit", 'POST');
         if (!$response || isset($response['error'])) {
             $this->sessionManager->setFlash('error', 'Unable to quit event.');
             header('Location: /');
@@ -206,9 +201,7 @@ class EventController
             return;
         }
         $apiService = new ApiService();
-        $response = $apiService->fetch("/events/{$eventId}/wishlist/add", 'POST', [
-            'userId' => $userId
-        ]);
+        $response = $apiService->fetch("/events/{$eventId}/wishlist/add", 'POST');
         if (!$response || isset($response['error'])) {
             $this->sessionManager->setFlash('error', 'Unable to add to wishlist.');
             header('Location: /');
@@ -228,9 +221,7 @@ class EventController
             return;
         }
         $apiService = new ApiService();
-        $response = $apiService->fetch("/events/{$eventId}/wishlist/remove", 'POST', [
-            'userId' => $userId
-        ]);
+        $response = $apiService->fetch("/events/{$eventId}/wishlist/remove", 'POST');
         if (!$response || isset($response['error'])) {
             $this->sessionManager->setFlash('error', 'Unable to remove from wishlist.');
             header('Location: /');

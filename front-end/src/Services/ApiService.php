@@ -37,7 +37,6 @@ class ApiService
         $responseHeaders = $http_response_header ?? [];
         $statusLine = $responseHeaders[0] ?? '';
         preg_match('{HTTP/\S*\s(\d{3})}', $statusLine, $match);
-
         if ($response === false) {
             error_log('API request failed');
             return [

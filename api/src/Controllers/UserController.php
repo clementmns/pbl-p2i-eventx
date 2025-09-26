@@ -108,6 +108,7 @@ class UserController
             Response::json(['error' => 'Unauthorized'], 401);
             return;
         }
+        $data['userId'] = $payload['id'];
         Response::json(['ok' => $this->svc->updateUser($id, $data)]);
     }
 

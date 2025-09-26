@@ -53,26 +53,25 @@ class EventController
 
     /**
      * Get events joined by a user.
-     * @param int $userId
      * @return void
      */
-    public function getEventsJoinedByUser($userId)
+    public function getEventsJoinedByUser()
     {
         $payload = Auth::getBearerTokenPayload();
         if (!$payload) {
             Response::json(['error' => 'Unauthorized'], 401);
             return;
         }
-        if (!$userId) {
+        if (!$payload['id']) {
             Response::json(['error' => 'userId_required'], 400);
             return;
         }
         // check if user exists
-        if (!$this->userService->getUser($userId)) {
+        if (!$this->userService->getUser($payload['id'])) {
             Response::json(['error' => 'user_not_found'], 404);
             return;
         }
-        $events = $this->svc->getEventsJoinedByUser($userId);
+        $events = $this->svc->getEventsJoinedByUser($payload['id']);
         Response::json($events);
     }
 
@@ -89,17 +88,18 @@ class EventController
             return;
         }
         // Required params for event creation
-        $required = ['userId', 'name', 'startDate', 'endDate', 'place'];
+        $required = ['name', 'startDate', 'endDate', 'place'];
         $missing = array_filter($required, fn($k) => empty($data[$k]));
         if ($missing) {
             Response::json(['error' => 'missing_params', 'missing' => $missing], 400);
             return;
         }
-        $userId = $data['userId'];
+        $userId = $payload['id'];
         if (!$this->userService->getUser($userId)) {
             Response::json(['error' => 'user_not_found'], 404);
             return;
         }
+        $data['userId'] = $userId;
         $res = $this->svc->createEvent($data);
         if (!$res['ok']) {
             Response::json(['error' => $res['error']], 400);
@@ -122,17 +122,29 @@ class EventController
             return;
         }
         // Required params for event update
-        $required = ['userId', 'name', 'startDate', 'endDate', 'place'];
+        $required = ['name', 'startDate', 'endDate', 'place'];
         $missing = array_filter($required, fn($k) => empty($data[$k]));
         if ($missing) {
             Response::json(['error' => 'missing_params', 'missing' => $missing], 400);
             return;
         }
-        $userId = $data['userId'];
+        $userId = $payload['id'];
         if (!$this->userService->getUser($userId)) {
             Response::json(['error' => 'user_not_found'], 404);
             return;
         }
+
+        // verify if this is the owner of the event
+        $event = $this->svc->getEvent($id);
+        if (!$event) {
+            Response::json(['error' => 'event_not_found'], 404);
+            return;
+        }
+        if ($event['userId'] !== $payload['id']) {
+            Response::json(['error' => 'forbidden'], 403);
+            return;
+        }
+        $data['userId'] = $userId;
         $res = $this->svc->updateEvent($id, $data);
         Response::json($res);
     }
@@ -149,22 +161,32 @@ class EventController
             Response::json(['error' => 'Unauthorized'], 401);
             return;
         }
+        $event = $this->svc->getEvent($id);
+        if (!$event) {
+            Response::json(['error' => 'event_not_found'], 404);
+            return;
+        }
+        // verify if this is the owner of the event
+        if ($event['userId'] !== $payload['id']) {
+            Response::json(['error' => 'forbidden'], 403);
+            return;
+        }
         Response::json($this->svc->deleteEvent($id));
     }
 
     /**
      * User joins an event.
      * @param int $eventId
-     * @param int|null $userId
      * @return void
      */
-    public function joinEvent(int $eventId, ?int $userId): void
+    public function joinEvent(int $eventId): void
     {
         $payload = Auth::getBearerTokenPayload();
         if (!$payload) {
             Response::json(['error' => 'Unauthorized'], 401);
             return;
         }
+        $userId = $payload['id'];
         if (!$userId) {
             Response::json(['error' => 'userId_required'], 400);
             return;
@@ -186,16 +208,16 @@ class EventController
     /**
      * User quits an event.
      * @param int $eventId
-     * @param int|null $userId
      * @return void
      */
-    public function quitEvent(int $eventId, ?int $userId): void
+    public function quitEvent(int $eventId): void
     {
         $payload = Auth::getBearerTokenPayload();
         if (!$payload) {
             Response::json(['error' => 'Unauthorized'], 401);
             return;
         }
+        $userId = $payload['id'];
         if (!$userId) {
             Response::json(['error' => 'userId_required'], 400);
             return;
@@ -216,16 +238,16 @@ class EventController
 
     /**
      * List wishlist events for a user.
-     * @param int|null $userId
      * @return void
      */
-    public function listWishlist(?int $userId): void
+    public function listWishlist(): void
     {
         $payload = Auth::getBearerTokenPayload();
         if (!$payload) {
             Response::json(['error' => 'Unauthorized'], 401);
             return;
         }
+        $userId = $payload['id'];
         if (!$userId) {
             Response::json(['error' => 'userId_required'], 400);
             return;
@@ -244,16 +266,16 @@ class EventController
     /**
      * Add an event to user's wishlist.
      * @param int $eventId
-     * @param int|null $userId
      * @return void
      */
-    public function addWishlist(int $eventId, ?int $userId): void
+    public function addWishlist(int $eventId): void
     {
         $payload = Auth::getBearerTokenPayload();
         if (!$payload) {
             Response::json(['error' => 'Unauthorized'], 401);
             return;
         }
+        $userId = $payload['id'];
         if (!$userId) {
             Response::json(['error' => 'userId_required'], 400);
             return;
@@ -275,16 +297,16 @@ class EventController
     /**
      * Remove an event from user's wishlist.
      * @param int $eventId
-     * @param int|null $userId
      * @return void
      */
-    public function removeWishlist(int $eventId, ?int $userId): void
+    public function removeWishlist(int $eventId): void
     {
         $payload = Auth::getBearerTokenPayload();
         if (!$payload) {
             Response::json(['error' => 'Unauthorized'], 401);
             return;
         }
+        $userId = $payload['id'];
         if (!$userId) {
             Response::json(['error' => 'userId_required'], 400);
             return;

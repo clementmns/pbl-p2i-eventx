@@ -20,16 +20,16 @@ class ProfileController
 
     /**
      * Get a profile by user ID.
-     * @param int $userId User ID
      * @return void
      */
-    public function getProfileByUser(int $userId)
+    public function getProfileByUser()
     {
         $payload = Auth::getBearerTokenPayload();
         if (!$payload) {
             Response::json(['error' => 'Unauthorized'], 401);
             return;
         }
+        $userId = $payload['id'];
         if (!$userId) {
             Response::json(['error' => 'userId_required'], 400);
             return;
@@ -44,17 +44,17 @@ class ProfileController
 
     /**
      * Create or update a profile for a user.
-     * @param int $userId User ID
      * @param array $data Profile data
      * @return void
      */
-    public function upsertProfile(int $userId, array $data)
+    public function upsertProfile(array $data)
     {
         $payload = Auth::getBearerTokenPayload();
         if (!$payload) {
             Response::json(['error' => 'Unauthorized'], 401);
             return;
         }
+        $userId = $payload['id'];
         if (!$userId) {
             Response::json(['error' => 'userId_required'], 400);
             return;
@@ -64,6 +64,7 @@ class ProfileController
             Response::json(['error' => 'user_not_found'], 404);
             return;
         }
+        $data['userId'] = $userId;
         Response::json($this->service->upsertProfile($userId, $data));
     }
 }

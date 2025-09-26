@@ -29,7 +29,7 @@ class EventService
 
     public function createEvent(array $data)
     {
-        if (empty($data['name']) || empty($data['startDate']) || empty($data['endDate']) || empty($data['place']) || empty($data['userId'])) {
+        if (empty($data['name']) || empty($data['startDate']) || empty($data['endDate']) || empty($data['place'])) {
             return ['ok' => false, 'error' => 'invalid_data'];
         }
         $id = $this->repo->create($data);
