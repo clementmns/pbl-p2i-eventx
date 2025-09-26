@@ -174,12 +174,6 @@ if ($uri === '/events/wishlist' && $method === 'GET') {
     exit;
 }
 
-// ---------- Fallback ----------
-try {
-    Response::json(['error' => 'Route not found'], 404);
-} catch (JsonException $e) {
-}
-
 // ----------- Profile ----------
 if (preg_match('#^/profiles/user/(\d+)$#', $uri, $m)) {
     $userId = (int) $m[1];
@@ -197,4 +191,10 @@ if (preg_match('#^/profiles/user/(\d+)$#', $uri, $m)) {
         }
         exit;
     }
+}
+
+// ---------- Fallback ----------
+try {
+    Response::json(['error' => 'Route not found'], 404);
+} catch (JsonException $e) {
 }

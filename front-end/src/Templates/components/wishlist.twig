@@ -7,9 +7,21 @@
         <ul class="space-y-4">
             {% for event in wishlist %}
             <div class="bg-white border border-gray-300">
-                <div class="p-4 border-b border-gray-200">
-                    <div class="flex items-center gap-3">
-                        <h3 class="text-lg font-bold text-gray-800">{{ event.name }}</h3>
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center gap-3">
+                            <h2 class="text-xl font-bold text-gray-800">{{ event.name }}</h2>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="text-xs flex gap-2">
+                                <div class="text-gray-900 font-medium">{{ event.registeredCount }}</div>
+                                <div class="text-gray-500">joined</div>
+                            </div>
+                            <div class="flex items-center gap-1 text-xs text-gray-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bookmark-icon lucide-bookmark"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+                                <span>{{ event.wishlistCount }}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="p-4">
