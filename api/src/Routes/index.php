@@ -35,6 +35,12 @@ if ($uri === '/status' && $method === 'GET') {
     exit;
 }
 
+if ($uri === '/' && $method === 'GET') {
+    $controller = new StatusController();
+    echo json_encode($controller->getRoutes(), JSON_THROW_ON_ERROR);
+    exit;
+}
+
 // ---------- Users ----------
 if ($uri === '/users' && $method === 'GET') {
     (new UserController())->listUsers();
