@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 
+date_default_timezone_set('Europe/Paris');
+
 use FrontEnd\Router;
 use Controllers\HomeController;
 use Controllers\AuthController;
