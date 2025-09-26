@@ -21,7 +21,7 @@ class UserRepository
         $row = $stmt->fetch();
         if (!$row)
             return null;
-        $user = new User((int) $row['id'], $row['mail'], $row['password'], (bool) $row['isActive'], isset($row['role_id']) ? (int) $row['role_id'] : null);
+        $user = new User((int) $row['id'], $row['mail'], $row['password'], (bool) $row['isActive'], (int) $row['roleId']);
         $profileStmt = $this->db->prepare("SELECT * FROM profiles WHERE userId = ?");
         $profileStmt->execute([$user->id]);
         $profileRow = $profileStmt->fetch();
@@ -38,7 +38,7 @@ class UserRepository
         $row = $stmt->fetch();
         if (!$row)
             return null;
-        $user = new User((int) $row['id'], $row['mail'], $row['password'], (bool) $row['isActive'], isset($row['role_id']) ? (int) $row['role_id'] : null);
+        $user = new User((int) $row['id'], mail: $row['mail'], passwordHash: $row['password'], isActive: (bool) $row['isActive'], roleId: (int) $row['roleId']);
         $profileStmt = $this->db->prepare("SELECT * FROM profiles WHERE userId = ?");
         $profileStmt->execute([$user->id]);
         $profileRow = $profileStmt->fetch();
