@@ -60,7 +60,7 @@ class EventController
             return;
         }
 
-        header('Location: /?success=Event created successfully!');
+        header('Location: /');
     }
 
     public function editEventView()
@@ -238,6 +238,5 @@ class EventController
         }
         $this->sessionManager->setFlash('success', 'Removed from wishlist!');
         header('Location: /');
-        header('Location: /?success=Removed from wishlist!');
     }
 }
